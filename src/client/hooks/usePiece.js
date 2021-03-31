@@ -1,39 +1,38 @@
 import { useCallback, useState } from 'react'
 import _ from 'lodash'
-import { BOARD_SIZE, PIECES } from '../constants/gameConstant'
+import { BOARD_SIZE, MAX_ROTATION, PIECES } from '../constants/gameConstant'
 import { randomPiece } from '../utils/randomPiece'
 import { checkCollision } from '../utils/createBoard'
 
 export const usePiece = () => {
 	const [piece, setPiece] = useState({ // eslint-disable-line
 		pos: { x: 0, y: 0 },
-		shape: PIECES[0].shape,
+		type: '0',
+		rotation: 0,
+		shape: PIECES[0].shape[0],
 		landed: false
 	})
 	const [prevPiece, setPrevPiece] = useState(null)
 
-	const rotate = (matrix, dir) => {
-		//Make rows become cols
-		const rotatedPiece = matrix.map((_, index) => matrix.map(col => col[index]))
-
-		//Reverse each row to get rotated matrix
-		if (dir > 0) return _.map(rotatedPiece, (row) => row.reverse())
-		return rotatedPiece.reverse()
+	const rotate = (piece, dir) => {
+		let rotation = piece.rotation + dir
+		if (rotation > MAX_ROTATION) rotation = 0
+		else if (rotation === -1) rotation = MAX_ROTATION
+		piece.rotation = rotation
+		piece.shape = PIECES[piece.type].shape[rotation]
 	}
 
 	const pieceRotate = (board, dir) => {
-		const clonedPiece = _.cloneDeep(piece)
-		clonedPiece.shape = rotate(clonedPiece.shape, dir)
+		let clonedPiece = _.cloneDeep(piece)
+		rotate(clonedPiece, dir)
 
-		const pos = clonedPiece.pos.x
 		let offset = 1
 		while (checkCollision(clonedPiece, piece, board, { x: 0, y: 0})) {
 			clonedPiece.pos.x += offset
 			offset = -(offset + (offset > 0 ? 1 : -1))
 			if (offset > clonedPiece.shape[0].length)
 			{
-				rotate(clonedPiece.shape, -dir)
-				clonedPiece.pos.x = pos
+				clonedPiece = piece
 				return
 			}
 		}
@@ -55,9 +54,12 @@ export const usePiece = () => {
 	}
 
 	const getPiece = () => {
+		const [shape, type] = randomPiece()
 		const newPiece = {
 			pos: { x: BOARD_SIZE.WIDTH / 2 - 2, y: 0 },
-			shape: randomPiece().shape,
+			type,
+			rotation: 0,
+			shape,
 			landed: false
 		}
 		setPrevPiece(newPiece)

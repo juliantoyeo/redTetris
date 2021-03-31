@@ -61,7 +61,8 @@ export const useBoard = (currentPiece, prevPiece, getPiece) => {
 			getPiece()
 			return checkRows(newBoard)
 		}
-		console.log(newBoard)
+		// console.log(currentPiece)
+		// console.log(newBoard)
 		return newBoard
 	}
 

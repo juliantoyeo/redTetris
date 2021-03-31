@@ -31,8 +31,6 @@ export const checkCollision = (piece, prevPiece, board, { x: moveX, y: moveY }) 
 			if (piece.shape[y][x] !== '0') {
 				// if (!newBoard[moveToY] || !newBoard[moveToY][moveToX] || newBoard[moveToY][moveToX][1] !== 'clear') {
 				if (!newBoard[moveToY] || !newBoard[moveToY][moveToX] || newBoard[moveToY][moveToX] !== '0') {
-					// console.log("im here", newBoard[moveToY][moveToX], !newBoard[moveToY], !newBoard[moveToY][moveToX], newBoard[moveToY][moveToX] !== 0)
-					// console.log("moveToY : ", moveToY, " moveToX : ", moveToX)
 					return true
 				}
 			}

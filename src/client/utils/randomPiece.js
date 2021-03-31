@@ -1,7 +1,7 @@
 import { PIECES } from '../constants/gameConstant'
 
 export const randomPiece = () => {
-	const pieces = 'IJLOSZT'
-	const randPiece = pieces[Math.floor(Math.random() * pieces.length)]
-	return PIECES[randPiece]
+	const types = 'IJLOSZT'
+	const randType = types[Math.floor(Math.random() * types.length)]
+	return [PIECES[randType].shape[0], randType]
 }
