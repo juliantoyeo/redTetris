@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import _ from 'lodash'
 import { BOARD_SIZE, MAX_ROTATION, PIECES, WALL_KICK, WALL_KICK_I } from '../constants/gameConstant'
 import { randomPiece } from '../utils/randomPiece'
-import { checkCollision } from '../utils/boardUtils'
+import { checkCollision, getLandPosition } from '../utils/boardUtils'
 
 export const usePiece = () => {
 	const initPiece = {
@@ -13,25 +13,44 @@ export const usePiece = () => {
 		landed: false
 	}
 	const [piece, setPiece] = useState(initPiece)
-	const [shadowPiece, setShadowPiece] = useState({
+	const [ghostPiece, setGhostPiece] = useState({
 		...initPiece,
 		type: 'X'
 	})
-	const [prevPiece, setPrevPiece] = useState(null)
 	
-	useEffect(() => {
-		const landPos = getLandPosition()
-		setShadowPiece({
-			...piece,
-			type: 'X',
-			pos: landPos
-		})
-	}, [piece])
+	// useEffect(() => {
+	// 	const landPos = getLandPosition(piece)
+	// 	setGhostPiece({
+	// 		...piece,
+	// 		type: 'X',
+	// 		pos: landPos
+	// 	})
+	// }, [piece])
 
-	const getLandPosition = () =>
+	// const getLandPosition = () =>
+	// {
+	// 	let landPos = {x : 0, y : 0}
+	// 	return landPos
+	// }
+
+	const getGhostPiece = (newPiece, boardWithLandedPiece) =>
 	{
-		let landPos = {x : 0, y : 0}
-		return landPos
+		const ghostPieceShape = Array.from(new Array(newPiece.shape.length), () => 
+			new Array(newPiece.shape.length).fill('0')
+		)
+		for (let y = 0; y < newPiece.shape.length; y += 1) {
+			for (let x = 0; x < newPiece.shape[y].length; x += 1) {
+				if (newPiece.shape[y][x] !== '0') {
+					ghostPieceShape[y][x] = 'X'
+				}
+			}
+		}
+		setGhostPiece({
+			type: 'X',
+			shape: ghostPieceShape,
+			pos: getLandPosition(newPiece, boardWithLandedPiece)
+		})
+		// console.log("ghostPieceShape ", ghostPieceShape)
 	}
 
 	const rotate = (piece, dir) => {
@@ -42,7 +61,7 @@ export const usePiece = () => {
 		piece.shape = PIECES[piece.type].shape[rotation]
 	}
 
-	const pieceRotate = (board, dir) => {
+	const pieceRotate = (boardWithLandedPiece, dir) => {
 		if (piece.type === 'O')
 			return
 		let clonedPiece = _.cloneDeep(piece)
@@ -55,7 +74,7 @@ export const usePiece = () => {
 		if (dir === -1)
 			wallKickSet = clonedPiece.rotation
 		let i = 0
-		while (checkCollision(clonedPiece, piece, board, { x: 0, y: 0}))
+		while (checkCollision(clonedPiece, boardWithLandedPiece, { x: 0, y: 0}))
 		{
 			if (i > 3) {
 				clonedPiece = piece
@@ -66,21 +85,29 @@ export const usePiece = () => {
 			clonedPiece.pos = {x : piece.pos.x + (offset.x * dir), y : piece.pos.y + (offset.y * dir)}
 			i++
 		}
-		setPrevPiece(piece)
 		setPiece(clonedPiece)
+		// setGhostPiece({
+		// 	...clonedPiece,
+		// 	type: 'X',
+		// 	pos: getLandPosition(clonedPiece, boardWithLandedPiece)
+		// })
+		getGhostPiece(clonedPiece, boardWithLandedPiece)
 	}
 
-	const updatePiece = (props) => {
-		const { x, y, landed } = props
-		if (!landed)
-			setPrevPiece(piece)
-		else
-			setPrevPiece(null)
-		setPiece(prev => ({
-			...prev,
-			pos: { x: (prev.pos.x + x), y: (prev.pos.y + y )},
+	const updatePiece = (boardWithLandedPiece, dir, landed) => {
+		// const { x, y, landed } = props
+		const newPiece = {
+			...piece,
+			pos: { x: (piece.pos.x + dir.x), y: (piece.pos.y + dir.y )},
 			landed
-		}))
+		}
+		setPiece(newPiece)
+		// setGhostPiece({
+		// 	...newPiece,
+		// 	type: 'X',
+		// 	pos: getLandPosition(newPiece, boardWithLandedPiece)
+		// })
+		getGhostPiece(newPiece, boardWithLandedPiece)
 	}
 
 	const getFirstY = (rotation, type) => {
@@ -95,7 +122,7 @@ export const usePiece = () => {
 		return y
 	}
 
-	const getPiece = () => {
+	const getPiece = (boardWithLandedPiece) => {
 		const [shape, type] = randomPiece()
 		const newPiece = {
 			pos: { x: BOARD_SIZE.WIDTH / 2 - 2, y: getFirstY(0, type) },
@@ -104,9 +131,14 @@ export const usePiece = () => {
 			shape,
 			landed: false
 		}
-		setPrevPiece(newPiece)
 		setPiece(newPiece)
+		// setGhostPiece({
+		// 	...newPiece,
+		// 	type: 'X',
+		// 	pos: getLandPosition(newPiece, boardWithLandedPiece)
+		// })
+		getGhostPiece(newPiece, boardWithLandedPiece)
 	}
 
-	return [piece, prevPiece, shadowPiece, updatePiece, getPiece, pieceRotate]
+	return [piece, ghostPiece, updatePiece, getPiece, pieceRotate]
 }

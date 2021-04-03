@@ -19,12 +19,16 @@ const mainContainerStyle = (props) => {
 
 const Board = (props) => {
 	const { board } = props
+	// let isGhostPiece = false
+	// let offset = 0
 	return (
 		<div style={mainContainerStyle({ width: BOARD_SIZE.WIDTH, height: BOARD_SIZE.HEIGHT })}>
-			{_.map(board, (row => 
-				_.map(row, (value, x) => {
+			{_.map(board, (y => 
+				_.map(y, (cell, x) => {
+					// if (x === ghostPiecePos.x && y === ghostPiecePos.y)
+					// 	isGhostPiece = (x === ghostPiecePos.x && y === ghostPiecePos.y)
 					return (
-						<Cell key={x} type={value} />
+						<Cell key={x} type={cell} />
 					)
 				})
 			))}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Board from './Board'
 import Display from './Display'
 import StartButton from './StartButton'
@@ -46,27 +46,41 @@ const Tetris = () => {
 	const [dropTime, setDropTime] = useState(null)
 	const [currentDropTime, setCurrentDropTime] = useState(defaulDropTime)
 	const [gameOver, setGameOver] = useState(false)
-	const [piece, prevPiece, shadowPiece, updatePiece, getPiece, pieceRotate] = usePiece()
-	const [board, setBoard, rowsCleared] = useBoard(piece, prevPiece, shadowPiece, getPiece)
+	const [piece, ghostPiece, updatePiece, getPiece, pieceRotate] = usePiece()
+	const [board, setBoard, boardWithLandedPiece, setBoardWithLandedPiece, rowsCleared] = useBoard(piece, ghostPiece, getPiece, gameOver)
 	const [score, setScore, rows, setRows, level, setLevel] = useGameStatus(rowsCleared)
 
-	// console.log('re-render', board)
+	useEffect(() => {
+		if (checkCollision(piece, boardWithLandedPiece, { x: 0, y: 0 })) {
+			if (piece.pos.y < 1) {
+				setGameOver(true)
+				setDropTime(null)
+				setCurrentDropTime(defaulDropTime)
+			}
+		}
+	}, [boardWithLandedPiece])
 
-	const movePiece = (dir) => {
-		if (!checkCollision(piece, null, board, { x: dir, y: 0 }))
-			updatePiece({ x: dir, y: 0, landed: false })
+	const movePiece = (x) => {
+		if (!checkCollision(piece, boardWithLandedPiece, { x: x, y: 0 }))
+			updatePiece(boardWithLandedPiece, { x: x, y: 0 }, false)
 	}
 
 	const moveUp = () => {
-		if (!checkCollision(piece, null, board, { x: 0, y: -1 }))
-			updatePiece({ x: 0, y: -1, landed: false })
+		if (!checkCollision(piece, boardWithLandedPiece, { x: 0, y: -1 }))
+			updatePiece(boardWithLandedPiece, { x: 0, y: -1 }, false)
+	}
+
+	const hardDrop = () => {
+		updatePiece(boardWithLandedPiece, { x: 0, y: ghostPiece.pos.y - piece.pos.y }, true)
 	}
 
 	const startGame = () => {
 		// Reset Everything
-		setBoard(createBoard())
+		const newBoard = createBoard()
+		setBoard(newBoard)
+		setBoardWithLandedPiece(newBoard)
 		setDropTime(currentDropTime)
-		getPiece()
+		getPiece(newBoard)
 		setGameOver(false)
 		setScore(0)
 		setRows(0)
@@ -81,15 +95,15 @@ const Tetris = () => {
 			setCurrentDropTime(newDropTime)
 			setDropTime(newDropTime)
 		}
-		if (!checkCollision(piece, null, board, { x: 0, y: 1 }))
-			updatePiece({ x: 0, y: 1, landed: false })
+		if (!checkCollision(piece, boardWithLandedPiece, { x: 0, y: 1 }))
+			updatePiece(boardWithLandedPiece, { x: 0, y: 1 }, false)
 		else {
-			if (piece.pos.y < 1) {
-				setGameOver(true)
-				setDropTime(null)
-				setCurrentDropTime(defaulDropTime)
-			}
-			updatePiece({ x: 0, y: 0, landed: true })
+			// if (piece.pos.y < 1) {
+			// 	setGameOver(true)
+			// 	setDropTime(null)
+			// 	setCurrentDropTime(defaulDropTime)
+			// }
+			updatePiece(boardWithLandedPiece, { x: 0, y: 0 }, true)
 		}
 	}
 
@@ -116,23 +130,25 @@ const Tetris = () => {
 			else if (keyCode === KEY_CODE.DOWN || keyCode === KEY_CODE.S)
 				dropPiece()
 			else if (keyCode === KEY_CODE.UP || keyCode === KEY_CODE.W)
-				moveUp()
-				// pieceRotate(board, 1)
+				// moveUp()
+				pieceRotate(boardWithLandedPiece, 1)
 			else if (keyCode === KEY_CODE.Z)
-				pieceRotate(board, -1)
-			else if (keyCode === KEY_CODE.SPACE || keyCode === KEY_CODE.X)
-				pieceRotate(board, 1)
+				pieceRotate(boardWithLandedPiece, -1)
+			else if (keyCode === KEY_CODE.X)
+				pieceRotate(boardWithLandedPiece, 1)
+			else if (keyCode === KEY_CODE.SPACE)
+				hardDrop(boardWithLandedPiece)
 		}
 	}
 
 	useInterval(() => {
-		// drop()
+		drop()
 	}, dropTime)
 
 	return (
 		<div style={mainContainerStyle()} role={'button'} tabIndex={'0'} onKeyDown={(e) => move(e)} onKeyUp={keyUp}>
 			<div style={containerStyle()}>
-				<Board board={board} />
+				<Board board={board} ghostPiecePos={ghostPiece.pos}/>
 				<aside style={asideStyle()}>
 					{gameOver ? (
 						<Display gameOver={gameOver} text={'Game Over'} />

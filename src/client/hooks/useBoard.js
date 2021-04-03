@@ -3,13 +3,14 @@ import _ from 'lodash'
 import { createBoard } from '../utils/boardUtils'
 import { BOARD_SIZE } from '../constants/gameConstant'
 
-export const useBoard = (currentPiece, prevPiece, shadowPiece, getPiece) => {
+export const useBoard = (currentPiece, ghostPiece, getPiece, gameOver) => {
 	const [board, setBoard] = useState(createBoard())
+	const [boardWithLandedPiece, setBoardWithLandedPiece] = useState(createBoard())
 	const [rowsCleared, setRowsCleared] = useState(0)
 
 	useEffect(() => {
 		setRowsCleared(0)
-		setBoard(prev => updateBoard(prev))
+		setBoard(updateBoard())
 	}, [currentPiece])
 
 	const findEmptyCell = (row) => {
@@ -36,14 +37,16 @@ export const useBoard = (currentPiece, prevPiece, shadowPiece, getPiece) => {
 		return newBoard
 	}
 
-	const updateBoard = (prevBoard) => {
-		const newBoard = _.cloneDeep(prevBoard)
-		
-		if (prevPiece) {
-			for (let y = 0; y < prevPiece.shape.length; y += 1) {
-				for (let x = 0; x < prevPiece.shape[y].length; x += 1) {
-					if (prevPiece.shape[y][x] !== '0') {
-						newBoard[y + prevPiece.pos.y][x + prevPiece.pos.x] = '0'
+	const updateBoard = () => {
+		let newBoard = _.cloneDeep(boardWithLandedPiece)
+		// console.log("currentPiece", currentPiece)
+		// console.log("ghostPiece", ghostPiece)
+		if (ghostPiece)
+		{
+			for (let y = 0; y < ghostPiece.shape.length; y += 1) {
+				for (let x = 0; x < ghostPiece.shape[y].length; x += 1) {
+					if (ghostPiece.shape[y][x] !== '0') {
+						newBoard[y + ghostPiece.pos.y][x + ghostPiece.pos.x] = ghostPiece.shape[y][x]
 					}
 				}
 			}
@@ -57,15 +60,16 @@ export const useBoard = (currentPiece, prevPiece, shadowPiece, getPiece) => {
 			}
 		}
 
-		if (currentPiece.landed) {
-			getPiece()
-			return checkRows(newBoard)
+		if (currentPiece.landed && !gameOver) {
+			newBoard = checkRows(newBoard)
+			getPiece(newBoard)
+			setBoardWithLandedPiece(newBoard)
 		}
-		// console.log(currentPiece)
-		// console.log(shadowPiece)
-		// console.log(newBoard)
+		
+		// console.log("newBoard", newBoard)
+		// console.log("boardWithLandedPiece", boardWithLandedPiece)
 		return newBoard
 	}
 
-	return [board, setBoard, rowsCleared]
+	return [board, setBoard, boardWithLandedPiece, setBoardWithLandedPiece, rowsCleared]
 }
