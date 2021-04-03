@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import Board from './Board'
 import Display from './Display'
 import StartButton from './StartButton'
-import { createBoard, checkCollision } from '../utils/createBoard'
+import { createBoard, checkCollision } from '../utils/boardUtils'
 
 import { useInterval } from '../hooks/useInterval'
 import { usePiece } from '../hooks/usePiece'
@@ -46,15 +46,20 @@ const Tetris = () => {
 	const [dropTime, setDropTime] = useState(null)
 	const [currentDropTime, setCurrentDropTime] = useState(defaulDropTime)
 	const [gameOver, setGameOver] = useState(false)
-	const [piece, prevPiece, updatePiece, getPiece, pieceRotate] = usePiece()
-	const [board, setBoard, rowsCleared] = useBoard(piece, prevPiece, getPiece)
+	const [piece, prevPiece, shadowPiece, updatePiece, getPiece, pieceRotate] = usePiece()
+	const [board, setBoard, rowsCleared] = useBoard(piece, prevPiece, shadowPiece, getPiece)
 	const [score, setScore, rows, setRows, level, setLevel] = useGameStatus(rowsCleared)
 
 	// console.log('re-render', board)
 
 	const movePiece = (dir) => {
 		if (!checkCollision(piece, null, board, { x: dir, y: 0 }))
-			updatePiece({ x: dir, y: 0 })
+			updatePiece({ x: dir, y: 0, landed: false })
+	}
+
+	const moveUp = () => {
+		if (!checkCollision(piece, null, board, { x: 0, y: -1 }))
+			updatePiece({ x: 0, y: -1, landed: false })
 	}
 
 	const startGame = () => {
@@ -111,6 +116,11 @@ const Tetris = () => {
 			else if (keyCode === KEY_CODE.DOWN || keyCode === KEY_CODE.S)
 				dropPiece()
 			else if (keyCode === KEY_CODE.UP || keyCode === KEY_CODE.W)
+				moveUp()
+				// pieceRotate(board, 1)
+			else if (keyCode === KEY_CODE.Z)
+				pieceRotate(board, -1)
+			else if (keyCode === KEY_CODE.SPACE || keyCode === KEY_CODE.X)
 				pieceRotate(board, 1)
 		}
 	}

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import _ from 'lodash'
-import { createBoard } from '../utils/createBoard'
+import { createBoard } from '../utils/boardUtils'
 import { BOARD_SIZE } from '../constants/gameConstant'
 
-export const useBoard = (currentPiece, prevPiece, getPiece) => {
+export const useBoard = (currentPiece, prevPiece, shadowPiece, getPiece) => {
 	const [board, setBoard] = useState(createBoard())
 	const [rowsCleared, setRowsCleared] = useState(0)
 
@@ -62,6 +62,7 @@ export const useBoard = (currentPiece, prevPiece, getPiece) => {
 			return checkRows(newBoard)
 		}
 		// console.log(currentPiece)
+		// console.log(shadowPiece)
 		// console.log(newBoard)
 		return newBoard
 	}

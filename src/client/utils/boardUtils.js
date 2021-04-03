@@ -1,4 +1,4 @@
-import { BOARD_SIZE } from '../constants/gameConstant'
+import { BOARD_SIZE, TEST_BOARD } from '../constants/gameConstant'
 import _ from 'lodash'
 
 export const createBoard = () => {
@@ -22,8 +22,6 @@ export const checkCollision = (piece, prevPiece, board, { x: moveX, y: moveY }) 
 		}
 	}
 
-	// console.log("newBoard", newBoard)
-
 	for (let y = 0; y < piece.shape.length; y += 1) {
 		for (let x = 0; x < piece.shape[y].length; x += 1) {
 			const moveToY = y + piece.pos.y + moveY
@@ -31,6 +29,10 @@ export const checkCollision = (piece, prevPiece, board, { x: moveX, y: moveY }) 
 			if (piece.shape[y][x] !== '0') {
 				// if (!newBoard[moveToY] || !newBoard[moveToY][moveToX] || newBoard[moveToY][moveToX][1] !== 'clear') {
 				if (!newBoard[moveToY] || !newBoard[moveToY][moveToX] || newBoard[moveToY][moveToX] !== '0') {
+					// console.log(piece.shape)
+					// console.log("collision happen on x : ", x, " y : ", y, " moveToX : ", moveToX, " moveToY : ", moveToY)
+					// colPos = { x: x, y: y}
+					// return { collided: true, colPos: { x: x, y: y}}
 					return true
 				}
 			}
