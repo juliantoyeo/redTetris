@@ -10,14 +10,6 @@ export const createBoard = () => {
 	)
 }
 
-export const createDisplayBoard = () => {
-	return (
-		Array.from(new Array(4), () => 
-			new Array(4).fill('0')
-		)
-	)
-}
-
 export const checkCollision = (piece, boardWithLandedPiece, { x: moveX, y: moveY }) => {
 	const newBoard = _.cloneDeep(boardWithLandedPiece)
 	// console.log("boardWithLandedPiece", boardWithLandedPiece)
@@ -61,17 +53,4 @@ export const getLandPosition = (piece, boardWithLandedPiece) => {
 	// const landPos = { x: piece.pos.x, y: moveY}
 	// console.log("landPos : ", landPos)
 	return { x: piece.pos.x, y: moveY}
-}
-
-export const updateDisplayBoard = (piece) => {
-	const newBoard = createDisplayBoard()
-
-	for (let y = 0; y < piece.shape.length; y += 1) {
-		for (let x = 0; x < piece.shape[y].length; x += 1) {
-			if (piece.shape[y][x] !== '0') {
-				newBoard[y][x] = piece.shape[y][x]
-			}
-		}
-	}
-	return newBoard
 }

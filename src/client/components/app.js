@@ -1,15 +1,26 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import Tetris from '../components/Tetris'
+import {
+	BrowserRouter as Router,
+	Switch,
+	Route,
+	Link,
+} from "react-router-dom";
+import Tetris from './Tetris'
 
 
 const App = (props) => {
 	props
 	return (
-		// <span>{props.message}</span>
-		<div className="App">
-			<Tetris/>
-		</div>
+		<Router>
+			<Switch>
+				<Route exact path={'*'}>
+					<div className="App">
+						<Tetris/>
+					</div>
+				</Route>
+			</Switch>
+		</Router>
 	)
 }
 

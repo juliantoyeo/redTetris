@@ -42,6 +42,7 @@
     "lodash": "^4.17.21",
     "mocha": "^2.4.5",
     "nyc": "^6.4.4",
+    "react-router-dom": "^5.2.0",
     "styled": "^1.0.0",
     "webpack": "^1.13.0",
     "webpack-dev-middleware": "^1.6.1",

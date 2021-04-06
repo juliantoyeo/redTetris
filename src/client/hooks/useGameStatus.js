@@ -1,22 +1,27 @@
 import { useState, useEffect, useCallback } from 'react'
 
 export const useGameStatus = (rowsCleared) => {
-	const [score, setScore] = useState(0)
-	const [rows, setRows] = useState(0)
-	const [level, setLevel] = useState(0)
+	const [gameStatus, setGameStatus] = useState({
+		score: 0,
+		rows: 0,
+		level: 0,
+	})
 
 	const linePoints = [40, 100, 300, 1200]
 
-	const calcScore = useCallback(() => {
+	const calcScore = () => {
 		if (rowsCleared > 0) {
-			setScore(prev => prev + linePoints[rowsCleared - 1] * (level + 1))
-			setRows(prev => prev + rowsCleared)
+			setGameStatus(prev => ({
+				...prev,
+				score: prev.score + linePoints[rowsCleared - 1] * (prev.level + 1),
+				rows: prev.rows + rowsCleared
+			}))
 		}
-	}, [level, linePoints, rowsCleared])
+	}
 
 	useEffect(() => {
 		calcScore()
-	}, [calcScore, rowsCleared, score])
+	}, [rowsCleared])
 
-	return [score, setScore, rows, setRows, level, setLevel]
+	return [gameStatus, setGameStatus]
 }

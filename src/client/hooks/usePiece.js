@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react'
 import _ from 'lodash'
 import { BOARD_SIZE, MAX_ROTATION, PIECES, WALL_KICK, WALL_KICK_I } from '../constants/gameConstant'
 import { randomPiece } from '../utils/randomPiece'
-import { checkCollision, getLandPosition, updateDisplayBoard } from '../utils/boardUtils'
+import { checkCollision, getLandPosition } from '../utils/boardUtils'
 
-export const usePiece = (setDisplayBoard) => {
+export const usePiece = () => {
 	const initPiece = {
 		pos: { x: 0, y: 0 },
 		type: '0',
@@ -152,7 +152,6 @@ export const usePiece = (setDisplayBoard) => {
 		// 	type: 'X',
 		// 	pos: getLandPosition(newPiece, boardWithLandedPiece)
 		// })
-		setDisplayBoard(updateDisplayBoard(piece))
 		getGhostPiece(newPiece, boardWithLandedPiece)
 	}
 
