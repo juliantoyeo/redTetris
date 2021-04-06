@@ -1,64 +1,99 @@
 import React, { useState, useEffect } from 'react'
 import Board from './Board'
 import Display from './Display'
-import StartButton from './StartButton'
-import { createBoard, checkCollision } from '../utils/boardUtils'
+import Button from './Button'
+import { createBoard, createDisplayBoard, checkCollision } from '../utils/boardUtils'
 
 import { useInterval } from '../hooks/useInterval'
 import { usePiece } from '../hooks/usePiece'
 import { useBoard } from '../hooks/useBoard'
 import { useGameStatus } from '../hooks/useGameStatus'
-import { KEY_CODE } from '../constants/gameConstant'
+import { KEY_CODE, CELL_SIZE } from '../constants/gameConstant'
 
-
-const mainContainerStyle = () => {
-	return ({
+const styles = {
+	mainContainer: {
+		boxSizing: 'border-box',
+		// display: 'flex',
+		// alignItems: 'center',
 		width: '100vw',
 		height: '100vh',
-		backgroundColor: 'black',
+		backgroundColor: '#555',
 		backgroundSize: 'cover',
-		overflow: 'hidden'
-	})
-}
-
-const containerStyle = () => {
-	return ({
+		fontFamily: "Avenir Next",
+		fontSize: '1.2vw',
+		// border: '1px solid black'
+		// overflow: 'hidden'
+	},
+	gameContainer: {
+		width: '50%',
 		display: 'flex',
-		alignItems: 'flex-start',
-		padding: '40px',
-		margin: '0 auto',
-		maxWidth: '900px'
-	})
-}
-
-const asideStyle = () => {
-	return ({
-		width: '100px',
-		maxWidth: '200px',
+		// flexDireaction: 'row',
+		// alignItems: 'flex-start',
+		// flexWrap: 'wrap',
+		// padding: '40px',
+		// margin: '0 auto',
+		// maxWidth: '500px',
+		// border: '1px solid white'
+	},
+	boardContainer: {
+		width: '60%',
+		// background: 'black'
+		// border: '1px solid white'
+	},
+	infoContainer: {
+		width: '30%',
+		// maxWidth: '200px',
 		display: 'block',
-		padding: '0 20px'
-	})
+		borderRadius: '3vw',
+		border: '2px solid #333',
+		padding: '2vw',
+		margin: '0 auto'
+	},
+	previewContainer: {
+		display: 'flex',
+		alignItems: 'center',
+		borderRadius: '3vw',
+		backgroundColor: 'black',
+		// border: '1px solid #333',
+		padding: '1vw',
+		overflow: 'hidden',
+		height: `${CELL_SIZE * 4}vw`
+		// color: 'white',
+		// margin: '0 auto'
+	}
 }
-
 
 const Tetris = () => {
 	const defaulDropTime = 1000
 	const [dropTime, setDropTime] = useState(null)
 	const [currentDropTime, setCurrentDropTime] = useState(defaulDropTime)
-	const [gameOver, setGameOver] = useState(false)
-	const [piece, ghostPiece, updatePiece, getPiece, pieceRotate] = usePiece()
+	const [gameOver, setGameOver] = useState(true)
+	const [displayBoard, setDisplayBoard] = useState(createDisplayBoard())
+	const [piece, ghostPiece, updatePiece, getPiece, pieceRotate] = usePiece(setDisplayBoard)
 	const [board, setBoard, boardWithLandedPiece, setBoardWithLandedPiece, rowsCleared] = useBoard(piece, ghostPiece, getPiece, gameOver)
 	const [score, setScore, rows, setRows, level, setLevel] = useGameStatus(rowsCleared)
+
+	// console.log("board", board)
+	
+
+	useEffect(() => {
+		// const test = document.getElementsByClassName('cell')[0].clientWidth
+		// console.log(test)
+	}, [piece])
 
 	useEffect(() => {
 		if (checkCollision(piece, boardWithLandedPiece, { x: 0, y: 0 })) {
 			if (piece.pos.y < 1) {
-				setGameOver(true)
-				setDropTime(null)
-				setCurrentDropTime(defaulDropTime)
+				stopGame()
 			}
 		}
 	}, [boardWithLandedPiece])
+
+	const stopGame = () => {
+		setGameOver(true)
+		setDropTime(null)
+		setCurrentDropTime(defaulDropTime)
+	}
 
 	const movePiece = (x) => {
 		if (!checkCollision(piece, boardWithLandedPiece, { x: x, y: 0 }))
@@ -75,20 +110,23 @@ const Tetris = () => {
 	}
 
 	const startGame = () => {
-		// Reset Everything
-		const newBoard = createBoard()
-		setBoard(newBoard)
-		setBoardWithLandedPiece(newBoard)
-		setDropTime(currentDropTime)
-		getPiece(newBoard)
-		setGameOver(false)
-		setScore(0)
-		setRows(0)
-		setLevel(0)
+		if (dropTime) {
+			stopGame()
+		} else {
+			// Reset Everything
+			const newBoard = createBoard()
+			setBoard(newBoard)
+			setBoardWithLandedPiece(newBoard)
+			setDropTime(currentDropTime)
+			getPiece(newBoard)
+			setGameOver(false)
+			setScore(0)
+			setRows(0)
+			setLevel(0)
+		}
 	}
 
 	const drop = () => {
-		// console.log(piece)
 		if (rows > (level + 1) * 10) {
 			setLevel(prev => prev + 1)
 			const newDropTime = defaulDropTime / (level + 1) + 200
@@ -98,11 +136,6 @@ const Tetris = () => {
 		if (!checkCollision(piece, boardWithLandedPiece, { x: 0, y: 1 }))
 			updatePiece(boardWithLandedPiece, { x: 0, y: 1 }, false)
 		else {
-			// if (piece.pos.y < 1) {
-			// 	setGameOver(true)
-			// 	setDropTime(null)
-			// 	setCurrentDropTime(defaulDropTime)
-			// }
 			updatePiece(boardWithLandedPiece, { x: 0, y: 0 }, true)
 		}
 	}
@@ -146,21 +179,31 @@ const Tetris = () => {
 	}, dropTime)
 
 	return (
-		<div style={mainContainerStyle()} role={'button'} tabIndex={'0'} onKeyDown={(e) => move(e)} onKeyUp={keyUp}>
-			<div style={containerStyle()}>
-				<Board board={board} ghostPiecePos={ghostPiece.pos}/>
-				<aside style={asideStyle()}>
+		<div style={styles.mainContainer} role={'button'} tabIndex={'0'} onKeyDown={(e) => move(e)} onKeyUp={keyUp}>
+			<div style={styles.gameContainer}>
+				<div style={styles.boardContainer}>
+					<Board board={board} />
+				</div>
+				<div style={styles.infoContainer}>
+					<div style={styles.previewContainer}>
+						<Board board={piece.shape} mini={true}/>
+					</div>
 					{gameOver ? (
 						<Display gameOver={gameOver} text={'Game Over'} />
 					) : (
 						<div>
-							<Display text={`Score: ${score}`} />
+							{/* <Display text={`Score: ${score}`} />
 							<Display text={`Rows: ${rows}`} />
-							<Display text={`Level: ${level}`} />
+							<Display text={`Level: ${level}`} /> */}
+							
 						</div>
 					)}
-					<StartButton onClick={startGame}/>
-				</aside>
+					
+					<Button onClick={startGame} text={gameOver ? 'Start Game' : 'Quit Game'}/>
+				</div>
+				{/* <div style={{ width: "100px"}}> */}
+					
+				{/* </div> */}
 			</div>
 		</div>
 	)

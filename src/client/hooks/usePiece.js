@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react'
 import _ from 'lodash'
 import { BOARD_SIZE, MAX_ROTATION, PIECES, WALL_KICK, WALL_KICK_I } from '../constants/gameConstant'
 import { randomPiece } from '../utils/randomPiece'
-import { checkCollision, getLandPosition } from '../utils/boardUtils'
+import { checkCollision, getLandPosition, updateDisplayBoard } from '../utils/boardUtils'
 
-export const usePiece = () => {
+export const usePiece = (setDisplayBoard) => {
 	const initPiece = {
 		pos: { x: 0, y: 0 },
 		type: '0',
@@ -110,7 +110,20 @@ export const usePiece = () => {
 		getGhostPiece(newPiece, boardWithLandedPiece)
 	}
 
-	const getFirstY = (rotation, type) => {
+	// const getFirstY = (rotation, type) => {
+	// 	let y = 0
+	// 	if (type !== 'O')
+	// 	{
+	// 		if (type === 'I' && rotation === 2)
+	// 			y = -2
+	// 		else	if (rotation === 2 || type === 'I' && rotation === 0)
+	// 			y = -1
+	// 	}
+	// 	return y
+	// }
+
+	const getFirstPos = (rotation, type) => {
+		let x = BOARD_SIZE.WIDTH / 2 - 2
 		let y = 0
 		if (type !== 'O')
 		{
@@ -118,14 +131,16 @@ export const usePiece = () => {
 				y = -2
 			else	if (rotation === 2 || type === 'I' && rotation === 0)
 				y = -1
+		} else {
+			x += 1
 		}
-		return y
+		return { x: x, y: y }
 	}
 
 	const getPiece = (boardWithLandedPiece) => {
 		const [shape, type] = randomPiece()
 		const newPiece = {
-			pos: { x: BOARD_SIZE.WIDTH / 2 - 2, y: getFirstY(0, type) },
+			pos: getFirstPos(0, type),
 			type,
 			rotation: 0,
 			shape,
@@ -137,6 +152,7 @@ export const usePiece = () => {
 		// 	type: 'X',
 		// 	pos: getLandPosition(newPiece, boardWithLandedPiece)
 		// })
+		setDisplayBoard(updateDisplayBoard(piece))
 		getGhostPiece(newPiece, boardWithLandedPiece)
 	}
 

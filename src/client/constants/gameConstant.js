@@ -3,8 +3,10 @@ export const BOARD_SIZE = {
 	HEIGHT: 20
 }
 
+export const CELL_SIZE = 2.5
+
 export const COLORS = {
-	BLACK: '10, 10, 10',
+	BLACK: '50, 50, 50',
 	BLUE: '110,181,255',
 	GREEN: '186, 255, 201',
 	LIGHT_BLUE: '186,225,255',
@@ -135,24 +137,20 @@ export const PIECES = {
 	O: {
 		shape: [
 			[
-				['0', 'O', 'O'],
-				['0', 'O', 'O'],
-				['0', '0', '0']
+				['O', 'O'],
+				['O', 'O']
 			],
 			[
-				['0', 'O', 'O'],
-				['0', 'O', 'O'],
-				['0', '0', '0']
+				['O', 'O'],
+				['O', 'O']
 			],
 			[
-				['0', 'O', 'O'],
-				['0', 'O', 'O'],
-				['0', '0', '0']
+				['O', 'O'],
+				['O', 'O']
 			],
 			[
-				['0', 'O', 'O'],
-				['0', 'O', 'O'],
-				['0', '0', '0']
+				['O', 'O'],
+				['O', 'O']
 			]
 		],
 		color: COLORS.YELLOW

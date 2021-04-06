@@ -1,37 +1,61 @@
 import React from 'react'
 import _ from 'lodash'
 
-import { BOARD_SIZE } from '../constants/gameConstant'
+import { BOARD_SIZE, CELL_SIZE } from '../constants/gameConstant'
 import Cell from './Cell'
 
 const mainContainerStyle = (props) => {
 	return ({
+		margin: '0 auto',
 		display: 'grid',
-		gridTemplateRows: `repeat(${props.height}, calc(25vw / ${props.width}))`,
+		gridTemplateRows: `repeat(${props.height}, calc(${CELL_SIZE}vw))`,
 		gridTemplateColumns: `repeat(${props.width}, 1fr)`,
 		gridGap: '1px',
-		border: '2px solid #333',
+		// border: '2px solid #333',
 		width: '100%',
-		maxWidth: '25vw',
-		background: '#111'
+		maxWidth: `${CELL_SIZE * props.width}vw`,
+		background: 'black'
 	})
 }
 
 const Board = (props) => {
-	const { board } = props
-	// let isGhostPiece = false
-	// let offset = 0
+	const { board, mini } = props
+
+	const getHeight = () => {
+		if (!mini)
+			return (board.length)
+		else {
+			let rowCount = 0
+			for(let i = 0; i < board.length; i++) {
+				if (checkShouldPrintRow(board[i]))
+					rowCount++
+			}
+			return rowCount
+		}
+	}
+
+	const checkShouldPrintRow = (row) => {
+		if (!mini)
+			return true
+		for(let i = 0; i < row.length; i++) {
+			if (row[i] !== '0')
+				return true
+		}
+	}
+
 	return (
-		<div style={mainContainerStyle({ width: BOARD_SIZE.WIDTH, height: BOARD_SIZE.HEIGHT })}>
-			{_.map(board, (y => 
-				_.map(y, (cell, x) => {
-					// if (x === ghostPiecePos.x && y === ghostPiecePos.y)
-					// 	isGhostPiece = (x === ghostPiecePos.x && y === ghostPiecePos.y)
+		<div style={mainContainerStyle({ width: board[0].length, height: getHeight() })}>
+			{_.map(board, (row, y) => {
+				if (checkShouldPrintRow(row)) {
 					return (
-						<Cell key={x} type={cell} />
+						_.map(row, (cell, x) => {
+							return (
+								<Cell key={x} type={cell} />
+							)
+						})
 					)
-				})
-			))}
+				}
+			})}
 		</div>
 	)
 }
