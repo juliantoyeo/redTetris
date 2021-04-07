@@ -1,5 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import '@babel/polyfill' // for aysnc function
 import {
 	BrowserRouter as Router,
 	Switch,
@@ -7,6 +8,7 @@ import {
 	Link,
 } from "react-router-dom";
 import Tetris from './Tetris'
+import Home from './Home'
 
 
 const App = (props) => {
@@ -14,10 +16,11 @@ const App = (props) => {
 	return (
 		<Router>
 			<Switch>
+				<Route exact path={'/'}>
+					<Home />
+				</Route>
 				<Route exact path={'*'}>
-					<div className="App">
-						<Tetris/>
-					</div>
+					<Tetris />
 				</Route>
 			</Switch>
 		</Router>
