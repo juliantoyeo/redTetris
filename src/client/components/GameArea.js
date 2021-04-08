@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Board from './Board'
-import Display from './Display'
-import Button from './Button'
+import Button from './subComponents/Button'
 import { CELL_SIZE } from '../constants/gameConstant'
 
 const styles = {
@@ -15,7 +14,7 @@ const styles = {
 		// padding: '40px',
 		// margin: '0 auto',
 		// maxWidth: '500px',
-		border: '1px solid white'
+		// border: '1px solid white'
 	},
 	boardContainer: {
 		width: '60%',
@@ -70,7 +69,7 @@ const GameArea = (props) => {
 				<Board board={board} />
 			</div>
 			<div style={styles.sideContainer}>
-				Next Piece
+				<span className={'header'}>Next Piece</span>
 				<div style={styles.previewContainer}>
 					<Board board={piece.shape} mini={true}/>
 				</div>
@@ -80,14 +79,7 @@ const GameArea = (props) => {
 					<span>Rows : {gameStatus.rows}</span>
 					<span>Level : {gameStatus.level}</span>
 				</div>
-				{/* {gameOver ? (
-					<Display gameOver={gameOver} text={'Game Over'} />
-				) : (
-					<div>
-					</div>
-				)} */}
-				
-				<Button onClick={startGame} text={gameOver ? 'Start Game' : 'Quit Game'}/>
+				<Button onClick={startGame} type={'button'} text={gameOver ? 'Start Game' : 'Quit Game'}/>
 			</div>
 		</div>
 	)

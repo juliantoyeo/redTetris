@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useLocation } from "react-router-dom";
 // import Board from './Board'
-// import Display from './Display'
 // import Button from './Button'
 import GameArea from './GameArea'
 import { createBoard, checkCollision } from '../utils/boardUtils'
@@ -22,26 +21,24 @@ const styles = {
 		backgroundColor: '#555',
 		backgroundSize: 'cover',
 		fontFamily: "Avenir Next",
-		fontSize: '1.2vw',
+		fontSize: '1vw',
 	}
 }
 
 const Tetris = () => {
 	const { roomName, playerName } = useParams();
-	// let location = useLocation();
 	const defaulDropTime = 1000
 	const [dropTime, setDropTime] = useState(null)
 	const [currentDropTime, setCurrentDropTime] = useState(defaulDropTime)
 	const [gameOver, setGameOver] = useState(true)
 	const [piece, ghostPiece, updatePiece, getPiece, pieceRotate] = usePiece()
 	const [board, setBoard, boardWithLandedPiece, setBoardWithLandedPiece, rowsCleared] = useBoard(piece, ghostPiece, getPiece, gameOver)
-	// const [score, setScore, rows, setRows, level, setLevel] = useGameStatus(rowsCleared)
 	const [gameStatus, setGameStatus] = useGameStatus(rowsCleared)
 	const [players, setPlayers] = useState([])
 
 	// console.log("location", location)
-	console.log("roomName", roomName)
-	console.log("playerName", playerName)
+	// console.log("roomName", roomName)
+	// console.log("playerName", playerName)
 
 	useEffect(() => {
 		// console.log(test)

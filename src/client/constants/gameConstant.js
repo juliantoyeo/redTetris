@@ -3,6 +3,8 @@ export const BOARD_SIZE = {
 	HEIGHT: 20
 }
 
+export const MAX_PLAYER = 8
+
 export const CELL_SIZE = 2.5
 
 export const COLORS = {
@@ -13,6 +15,7 @@ export const COLORS = {
 	ORANGE: '255,223,186',
 	PURPLE: '238,203,255',
 	RED: '255,179,186',
+	DARK_RED: '255,150,150',
 	YELLOW: '255,255,186'
 }
 
