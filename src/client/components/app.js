@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import '@babel/polyfill' // for aysnc function
 import {
-	BrowserRouter as Router,
+	HashRouter as Router,
 	Switch,
 	Route,
 	Link,
@@ -16,11 +16,11 @@ const App = (props) => {
 	return (
 		<Router>
 			<Switch>
-				<Route exact path={'/'}>
-					<Home />
+				<Route exact path={'/:roomName[:playerName]'}>
+					<Tetris />
 				</Route>
 				<Route exact path={'*'}>
-					<Tetris />
+					<Home />
 				</Route>
 			</Switch>
 		</Router>

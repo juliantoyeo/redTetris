@@ -3,6 +3,17 @@ body {
 	font-family: 'Avenir Next';
 }
 
+*, *:before, *:after{
+	-moz-box-sizing			: border-box;
+	-webkit-box-sizing		: border-box;
+	box-sizing				: border-box;
+}
+
+textarea, input, button, fieldset{
+	outline					: none;
+	border					: none;
+}
+
 /* @font-face {
 	font-family: 'sans-serif';
 } */
