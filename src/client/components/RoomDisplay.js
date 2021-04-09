@@ -31,12 +31,12 @@ const styles = {
 const RoomDisplay = (props) => {
 	const { room, onClick, onLeave } = props
 	const currentPlayer = useSelector(selectCurrentPlayer)
-	const isLobby = currentPlayer.roomName === room.name
 
 	if (!room)
 		return (<div style={styles.mainContainer} key={'empty'}><span>No room to join</span></div>)
 
 	let canJoin = true
+	const isLobby = currentPlayer.roomName === room.name
 	const playerCount = room.players.length
 	if (playerCount === room.maxPlayer)
 		canJoin = false
