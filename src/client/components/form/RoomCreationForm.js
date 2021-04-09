@@ -1,5 +1,6 @@
 import React from 'react'
 import Button from '../subComponents/Button'
+import { MAX_PLAYER } from '../../constants/gameConstant'
 
 const styles = {
 	input: {
@@ -38,7 +39,7 @@ const RoomCreationForm = (props) => {
 					required
 					step={'1'}
 					min={'1'}
-					max={'8'}
+					max={MAX_PLAYER}
 				/>
 				<Button style={{ width: '15%' }} type={'submit'} text={'Create'} />
 			</form>

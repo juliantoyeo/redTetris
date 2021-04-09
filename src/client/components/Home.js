@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux'
+import { selectCurrentPlayer } from '../selectors/rootSelector'
+import { createPlayer, updatePlayer } from '../actions/playerActions'
+import { alert } from '../actions/alert'
 import { COLORS } from '../constants/gameConstant'
 
 import RoomDisplay from './RoomDisplay'
-import Button from './subComponents/Button'
 import NameForm from './form/NameForm'
 import RoomCreationForm from './form/RoomCreationForm'
+import _ from 'lodash';
 
 const styles = {
 	mainContainer: {
@@ -43,14 +47,28 @@ const styles = {
 
 const Home = () => {
 	const history = useHistory();
+	const dispatch = useDispatch();
+	const currentPlayer = useSelector(selectCurrentPlayer)
 	const [form, setform] = useState({ playerName: '', roomName: '', maxPlayer: 1 })
 	const [playerName, setPlayerName] = useState(null)
-	const [rooms, setRooms] = useState([])
+	// const [rooms, setRooms] = useState([])
 	// const [playerName, setPlayerName] = useState('player123')
-	// const [rooms, setRooms] = useState([{ name:'testRoom', creator:'player123', playerCount: 1, maxPlayer: 1 }])
+	const [rooms, setRooms] = useState([{ name:'testRoom', creator:'im here', players: ['im here'],  maxPlayer: 2 }])
+	const [selectedRoom, setSelectedRoom] = useState(null)
 
-	console.log('form', form)
-	// console.log('rooms', rooms)
+	// console.log('form', form)
+	
+	// console.log(currentPlayer)
+	console.log('rooms', rooms)
+	useEffect(() => {
+		// console.log(test)
+		setPlayerName('player123')
+		const newPlayer = {
+			name: 'player123',
+			roomName: null
+		}
+		dispatch(createPlayer(newPlayer))
+	}, [])
 
 	const onFormChange = (event, type) => {
 		const value = event.target.value
@@ -64,40 +82,78 @@ const Home = () => {
 	const onSubmitName = (event) => {
 		event.preventDefault()
 		setPlayerName(form.playerName)
+		const newPlayer = {
+			name: form.playerName,
+			roomName: null
+		}
+		dispatch(createPlayer(newPlayer))
 	}
 
-	const onSubmitRoom = (event) => {
+	const enterOrLeaveRoom = (room) => {
+		const updatedPlayer = {
+			...currentPlayer,
+			roomName: room ? room.name : null
+		}
+		setSelectedRoom(room)
+		dispatch(updatePlayer(updatedPlayer))
+	}
+
+	const onCreateRoom = (event) => {
 		event.preventDefault()
 		const room = {
 			name: form.roomName,
 			creator: playerName,
-			playerCount: 0,
+			players: [playerName],
 			maxPlayer: form.maxPlayer
 		}
 		const newRooms = _.cloneDeep(rooms)
 		newRooms.push(room)
 		setRooms(newRooms)
+		enterOrLeaveRoom(room)
 	}
 
-	const onJoinRoom = (roomName) => {
-		history.push(`/${roomName}[${playerName}]`)
+	const onJoinRoom = (room) => {
+		const updatedRoom = {
+			...room,
+			players: [...room.players, currentPlayer.name]
+		}
+		setRooms(_.unionBy([updatedRoom], rooms, 'name'))
+		enterOrLeaveRoom(updatedRoom)
+	}
+
+	const onLeaveGame = (room) => {
+		const updatedRoom = {
+			...room,
+			players: _.filter(room.players, (player) => player !== currentPlayer.name)
+		}
+		if (updatedRoom.players.length === 0)
+			setRooms(_.filter(rooms, (room) => room.name !== updatedRoom.name))
+		else
+			setRooms(_.unionBy([updatedRoom], rooms, 'name'))
+		enterOrLeaveRoom(null)
+	}
+
+	const onStartGame = (room) => {
+		history.push(`/${room.name}[${playerName}]`)
 	}
 
 	const getRooms = () => {
-		if (!_.isEmpty(rooms))
+		if (selectedRoom)
+			return <RoomDisplay room={_.find(rooms, (room) => room.name === currentPlayer.roomName)} onClick={onStartGame} onLeave={onLeaveGame}/>
+		else if (!_.isEmpty(rooms))
 			return _.map(rooms, (room, index) => <RoomDisplay room={room} onClick={onJoinRoom} key={`${room.name}#${index}`} />)
-		return <RoomDisplay room={null} onClick={null} key={`empty`} />
+		return <RoomDisplay room={null} onClick={null} />
 	}
 
 	return (
 		<div style={styles.mainContainer}>
 			{playerName ?
 			<div style={styles.box}>
-				<span className={'header'}>All Rooms</span>
+				<span className={'header'}>{!selectedRoom? 'Available Rooms' : 'Game Lobby'}</span>
 				<div style={styles.roomContainer}>
 					{getRooms()}
 				</div>
-				<RoomCreationForm  onSubmit={onSubmitRoom} onChange={onFormChange} />
+				{!selectedRoom&& <RoomCreationForm  onSubmit={onCreateRoom} onChange={onFormChange} />}
 			</div> :
 			<div style={styles.box}>
 				<NameForm onSubmit={onSubmitName} onChange={onFormChange} />

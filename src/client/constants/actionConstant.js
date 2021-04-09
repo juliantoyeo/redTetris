@@ -1,3 +1,8 @@
 export const ACTIONS = {
 	ALERT_POP: 'ALERT_POP'
 }
+
+export const PLAYER_ACTIONS = {
+	CREATE_PLAYER: 'CREATE_PLAYER',
+	UPDATE_PLAYER: 'UPDATE_PLAYER',
+}

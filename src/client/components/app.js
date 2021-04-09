@@ -30,23 +30,27 @@ const App = (props) => {
 const mapStateToProps = (state, ownProps) => {
 	return {
 		...ownProps,
-		message: state.message
+		// message: state.message
 	}
 }
 
-const mapDispatchToProps = (dispatch) => { //testing dispatch
-	return {
-		alert: (message) => {
-			dispatch(
-				{
-					type: "test",
-					message
-				}
-			)
-		}
-	}
-}
+// const mapDispatchToProps = {
 
-export default connect(mapStateToProps, mapDispatchToProps)(App)
+// }
+
+// const mapDispatchToProps = (dispatch) => { //testing dispatch
+// 	return {
+// 		alert: (message) => {
+// 			dispatch(
+// 				{
+// 					type: "test",
+// 					message
+// 				}
+// 			)
+// 		}
+// 	}
+// }
+
+export default connect(mapStateToProps, null)(App)
 
 
