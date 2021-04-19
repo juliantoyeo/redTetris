@@ -1,6 +1,5 @@
-import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { selectCurrentPlayer } from '../selectors/rootSelector'
+import React, { useContext } from 'react'
+import combinedContext from '../contexts/combinedContext'
 import Button from './subComponents/Button'
 import { COLORS } from '../constants/gameConstant'
 
@@ -30,13 +29,13 @@ const styles = {
 
 const RoomDisplay = (props) => {
 	const { room, onClick, onLeave } = props
-	const currentPlayer = useSelector(selectCurrentPlayer)
+	const [state] = useContext(combinedContext)
 
 	if (!room)
 		return (<div style={styles.mainContainer} key={'empty'}><span>No room to join</span></div>)
 
 	let canJoin = true
-	const isLobby = currentPlayer.roomName === room.name
+	const isLobby = state.currentPlayer.roomName === room.name
 	const playerCount = room.players.length
 	if (playerCount === room.maxPlayer)
 		canJoin = false

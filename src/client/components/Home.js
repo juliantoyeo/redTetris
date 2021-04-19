@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useHistory } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux'
-import { selectCurrentPlayer, selectRooms } from '../selectors/rootSelector'
 import { createPlayer, updatePlayer } from '../actions/playerActions'
 import { addRoom, deleteRoom, updateRoom } from '../actions/roomActions'
-import { alert } from '../actions/alert'
-import { COLORS } from '../constants/gameConstant'
+
+import combinedContext from '../contexts/combinedContext'
 
 import RoomDisplay from './RoomDisplay'
 import NameForm from './form/NameForm'
@@ -48,46 +46,46 @@ const styles = {
 
 const Home = () => {
 	const history = useHistory();
-	const dispatch = useDispatch();
-	const currentPlayer = useSelector(selectCurrentPlayer)
-	const rooms = useSelector(selectRooms)
-	const [form, setform] = useState({ playerName: '', roomName: '', maxPlayer: 1 })
+	const [state, dispatch] = useContext(combinedContext)
+	const { currentPlayer, rooms } = state
+	const [form, setForm] = useState({ playerName: '', roomName: '', maxPlayer: 1 })
 	const [selectedRoom, setSelectedRoom] = useState(null)
 
-	// console.log('form', form)
-	
-	// console.log(currentPlayer)
-	// console.log('rooms', rooms)
+	console.log('state', state)
+
 
 	useEffect(() => {
-		const newPlayer = {
-			name: 'player123',
-			roomName: null
-		}
-		const newRoom = {
-			name:'testRoom',
-			creator:'im here',
-			players: ['im here'],
-			maxPlayer: 2
-		}
-		dispatch(createPlayer(newPlayer))
-		dispatch(addRoom(newRoom))
+		// const newPlayer = {
+		// 	name: 'player123',
+		// 	roomName: 'hsdjasjh'
+		// }
+		// const newRoom = {
+		// 	name:'testRoom',
+		// 	creator:'im here',
+		// 	players: ['im here'],
+		// 	maxPlayer: 2
+		// }
+		// dispatch(createPlayer(newPlayer))
+		// dispatch(addRoom(newRoom))
+		// dispatch(addRoom(newRoom))
+		// dispatch(addRoom(newRoom))
 	}, [])
 
 	const onFormChange = (event, type) => {
 		const value = event.target.value
-		setform(prev => ({
+		setForm(prev => ({
 			playerName: type === 'playerName' ? value : prev.playerName,
 			roomName: type === 'roomName' ? value : prev.roomName,
 			maxPlayer: type === 'maxPlayer' ? parseInt(value) : prev.maxPlayer,
 		}))
 	}
 
+
 	const onSubmitName = (event) => {
 		event.preventDefault()
 		const newPlayer = {
 			name: form.playerName,
-			roomName: null
+			roomName: ''
 		}
 		dispatch(createPlayer(newPlayer))
 	}
@@ -95,7 +93,7 @@ const Home = () => {
 	const enterOrLeaveRoom = (room) => {
 		const updatedPlayer = {
 			...currentPlayer,
-			roomName: room ? room.name : null
+			roomName: room ? room.name : ''
 		}
 		setSelectedRoom(room)
 		dispatch(updatePlayer(updatedPlayer))
@@ -148,7 +146,7 @@ const Home = () => {
 
 	return (
 		<div style={styles.mainContainer}>
-			{currentPlayer ?
+			{currentPlayer.connected ?
 			<div style={styles.box}>
 				<span className={'header'}>{!selectedRoom? 'Available Rooms' : 'Game Lobby'}</span>
 				<div style={styles.roomContainer}>

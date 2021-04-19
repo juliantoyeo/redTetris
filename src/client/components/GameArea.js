@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import combinedContext from '../contexts/combinedContext'
 import Board from './Board'
 import Button from './subComponents/Button'
 import { CELL_SIZE } from '../constants/gameConstant'
@@ -62,6 +63,8 @@ const styles = {
 
 const GameArea = (props) => {
 	const {board, piece, gameOver, gameStatus, startGame} = props
+	const [state] = useContext(combinedContext)
+	const { currentPlayer } = state
 
 	return (
 		<div style={styles.mainContainer}>
@@ -74,7 +77,7 @@ const GameArea = (props) => {
 					<Board board={piece.shape} mini={true}/>
 				</div>
 				<div style={styles.infoContainer}>
-					<span>Player Name : Jyeoooo</span>
+					<span>Player Name : {currentPlayer.name}</span>
 					<span>Score : {gameStatus.score}</span>
 					<span>Rows : {gameStatus.rows}</span>
 					<span>Level : {gameStatus.level}</span>

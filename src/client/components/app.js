@@ -1,5 +1,4 @@
 import React from 'react'
-import { connect } from 'react-redux'
 import '@babel/polyfill' // for aysnc function
 import {
 	HashRouter as Router,
@@ -9,48 +8,30 @@ import {
 } from "react-router-dom";
 import Tetris from './Tetris'
 import Home from './Home'
+import CombinedContext from '../contexts/combinedContext'
+import useCombinedReducers from '../reducers/combinedReducers'
 
 
-const App = (props) => {
-	props
+const App = () => {
+
+	const [state, dispatch] = useCombinedReducers()
+
 	return (
-		<Router>
-			<Switch>
-				<Route exact path={'/:roomName[:playerName]'}>
-					<Tetris />
-				</Route>
-				<Route exact path={'*'}>
-					<Home />
-				</Route>
-			</Switch>
-		</Router>
+		<CombinedContext.Provider value={[state, dispatch]}>
+			<Router>
+				<Switch>
+					<Route exact path={'/:roomName[:playerName]'}>
+						<Tetris />
+					</Route>
+					<Route exact path={'*'}>
+						<Home />
+					</Route>
+				</Switch>
+			</Router>
+		</CombinedContext.Provider>
 	)
 }
 
-const mapStateToProps = (state, ownProps) => {
-	return {
-		...ownProps,
-		// message: state.message
-	}
-}
-
-// const mapDispatchToProps = {
-
-// }
-
-// const mapDispatchToProps = (dispatch) => { //testing dispatch
-// 	return {
-// 		alert: (message) => {
-// 			dispatch(
-// 				{
-// 					type: "test",
-// 					message
-// 				}
-// 			)
-// 		}
-// 	}
-// }
-
-export default connect(mapStateToProps, null)(App)
+export default App
 
 

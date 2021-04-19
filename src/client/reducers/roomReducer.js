@@ -1,7 +1,9 @@
 import { ROOM_ACTIONS } from '../constants/actionConstant'
 import _ from 'lodash';
 
-const reducer = (state = [] , action) => {
+export const roomsInitialState = []
+
+const reducer = (state, action) => {
 	switch(action.type){
 	case ROOM_ACTIONS.ADD_ROOM:
 		return [ ...state, action.newRoom ]
