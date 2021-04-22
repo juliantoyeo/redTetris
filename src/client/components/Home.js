@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useHistory } from 'react-router-dom';
-import { createPlayer, updatePlayer } from '../actions/playerActions'
+import { createPlayer, updatePlayer, initiateSocket, subscribeToRoom, disconnectSocket, connectPlayer } from '../actions/playerActions'
 import { addRoom, deleteRoom, updateRoom } from '../actions/roomActions'
 
 import combinedContext from '../contexts/combinedContext'
@@ -55,6 +55,15 @@ const Home = () => {
 
 
 	useEffect(() => {
+		initiateSocket()
+
+		subscribeToRoom((msg) => {
+			console.log('msg', msg)
+		})
+
+		return () => {
+			disconnectSocket();
+		}
 		// const newPlayer = {
 		// 	name: 'player123',
 		// 	roomName: 'hsdjasjh'
@@ -81,13 +90,13 @@ const Home = () => {
 	}
 
 
-	const onSubmitName = (event) => {
+	const onSubmitName = async (event) => {
 		event.preventDefault()
 		const newPlayer = {
 			name: form.playerName,
 			roomName: ''
 		}
-		dispatch(createPlayer(newPlayer))
+		connectPlayer(newPlayer)(dispatch)
 	}
 
 	const enterOrLeaveRoom = (room) => {
