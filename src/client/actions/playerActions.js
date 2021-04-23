@@ -1,20 +1,6 @@
 import { PLAYER_ACTIONS } from '../constants/actionConstant';
-import socketIOClient from 'socket.io-client';
-import params from '../../../params';
 
-let socket;
-
-export const initiateSocket = () => {
-	socket = socketIOClient(params.server.url);
-	// if (socket && room) socket.emit('join', room)
-
-};
-
-export const subscribeToRoom = () => {
-	if (!socket) return (true);
-}
-
-export const createPlayer = (playerData) => dispatch => {
+export const createPlayer = (socket, playerData) => (dispatch) => {
 	let resValue;
 	socket.on('createPlayer', (msg) => {
 		console.log('WebSocket event received :', msg)
@@ -30,12 +16,7 @@ export const createPlayer = (playerData) => dispatch => {
 	});
 };
 
-export const disconnectSocket = () => {
-	console.log("disconnecting socket")
-	if (socket) socket.disconnect();
-}
-
-export const updatePlayer = (currentPlayer) => dispatch => {
+export const updatePlayer = (socket, currentPlayer) => (dispatch) => {
 	let resValue;
 	socket.on('updatePlayer', (msg) => {
 		console.log('WebSocket event received :', msg)

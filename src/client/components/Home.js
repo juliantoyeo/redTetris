@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useHistory } from 'react-router-dom';
-import { updatePlayer, initiateSocket, subscribeToRoom, disconnectSocket, createPlayer } from '../actions/playerActions'
+
+import { updatePlayer, createPlayer } from '../actions/playerActions'
+import { initiateSocket, disconnectSocket } from '../actions/server';
 import { addRoom, deleteRoom, updateRoom } from '../actions/roomActions'
 
 import combinedContext from '../contexts/combinedContext'
@@ -45,24 +47,23 @@ const styles = {
 }
 
 const Home = () => {
+
 	const history = useHistory();
-	const [state, dispatch] = useContext(combinedContext)
-	const { currentPlayer, rooms } = state
-	const [form, setForm] = useState({ playerName: '', roomName: '', maxPlayer: 1 })
-	const [selectedRoom, setSelectedRoom] = useState(null)
+	const [state, dispatch] = useContext(combinedContext);
+
+	const [socket, setSocket] = useState(null);
+	const [form, setForm] = useState({ playerName: '', roomName: '', maxPlayer: 1 });
+	const [selectedRoom, setSelectedRoom] = useState(null);
+
+	const { currentPlayer, rooms } = state;
 
 	console.log('state', state)
 
-
 	useEffect(() => {
-		initiateSocket()
-
-		subscribeToRoom((msg) => {
-			console.log('msg', msg)
-		})
+		setSocket(initiateSocket())
 
 		return () => {
-			disconnectSocket();
+			disconnectSocket(socket);
 		}
 		// const newPlayer = {
 		// 	name: 'player123',
@@ -96,7 +97,7 @@ const Home = () => {
 			name: form.playerName,
 			roomName: ''
 		}
-		createPlayer(newPlayer)(dispatch);
+		createPlayer(socket, newPlayer)(dispatch);
 	}
 
 	const enterOrLeaveRoom = (room) => {
@@ -105,7 +106,7 @@ const Home = () => {
 			roomName: room ? room.name : ''
 		}
 		setSelectedRoom(room)
-		updatePlayer(updatedPlayer)(dispatch);
+		updatePlayer(socket, updatedPlayer)(dispatch);
 	}
 
 	const onCreateRoom = (event) => {
@@ -116,7 +117,7 @@ const Home = () => {
 			players: [currentPlayer.name],
 			maxPlayer: form.maxPlayer
 		}
-		dispatch(addRoom(newRoom))
+		addRoom(socket, newRoom)(dispatch)
 		enterOrLeaveRoom(newRoom)
 	}
 
@@ -125,7 +126,7 @@ const Home = () => {
 			...room,
 			players: [...room.players, currentPlayer.name]
 		}
-		dispatch(updateRoom(updatedRoom))
+		updateRoom(socket, updatedRoom)(dispatch);
 		enterOrLeaveRoom(updatedRoom)
 	}
 
@@ -135,9 +136,9 @@ const Home = () => {
 			players: _.filter(room.players, (player) => player !== currentPlayer.name)
 		}
 		if (updatedRoom.players.length === 0)
-			dispatch(deleteRoom(updatedRoom.name))
+			deleteRoom(socket, updatedRoom.name)(dispatch);
 		else
-			dispatch(updateRoom(updatedRoom))
+			updateRoom(socket, updatedRoom)(dispatch);
 		enterOrLeaveRoom(null)
 	}
 

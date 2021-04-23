@@ -1,10 +1,15 @@
 import fs from 'fs';
 import debug from 'debug';
-import { createBoard } from '../client/utils/boardUtils';
+
+import { playersSocket } from './playersSocket';
+import { roomSocket } from './roomsSocket';
 
 const logerror = debug('tetris:error');
 const loginfo = debug('tetris:info');
+
 const clients = new Array();
+const rooms = new Array();
+
 
 const initApp = (app, params, cb) => {
 	const { host, port } = params;
@@ -35,56 +40,10 @@ const initEngine = (io) => {
 		// 	console.log(`Socket ${socket.id} joining ${room}`);
 		// 	socket.join(room);
 		// });
+		console.log('connected', socket.id);
 
-		socket.on('createPlayer', (playerData, callback) => {
-			const { name, roomName } = playerData;
-			if (clients.findIndex((client) => client.name == playerData.name) == -1) {
-				clients.push({
-					name,
-					roomName,
-				});
-				callback({
-					status: 200,
-					msg: 'CONNECTED'
-				});
-			}
-			else {
-				callback({
-					status: 404,
-					msg: 'NAME_EXIST'
-				});
-			}
-			socket.emit('createPlayer', playerData);
-		});
-
-		socket.on('updatePlayer', (currentPlayer, callback) => {
-			const { connected, name, roomName } = currentPlayer;
-			const index = clients.findIndex((client) => client.name == currentPlayer.name);
-			if (index == -1) {
-				callback({
-					status: 404,
-					msg: 'NAME_DOESNT_EXIST'
-				});
-			}
-			else if (clients.findIndex((client) => client.roomName == currentPlayer.roomName) != -1) {
-				callback({
-					status: 405,
-					msg: 'ROOM_EXIST'
-				});
-			}
-			else {
-				clients.splice(index, 1, {
-					connected,
-					name,
-					roomName,
-				});
-				callback({
-					status: 200,
-					msg: 'UPDATED'
-				});
-			}
-			socket.emit('updatePlayer', currentPlayer);
-		});
+		playersSocket(clients, socket);
+		roomSocket(rooms, socket);
 	});
 };
 
