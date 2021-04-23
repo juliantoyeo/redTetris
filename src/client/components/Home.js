@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useHistory } from 'react-router-dom';
-import { createPlayer, updatePlayer, initiateSocket, subscribeToRoom, disconnectSocket, connectPlayer } from '../actions/playerActions'
+import { updatePlayer, initiateSocket, subscribeToRoom, disconnectSocket, createPlayer } from '../actions/playerActions'
 import { addRoom, deleteRoom, updateRoom } from '../actions/roomActions'
 
 import combinedContext from '../contexts/combinedContext'
@@ -96,7 +96,7 @@ const Home = () => {
 			name: form.playerName,
 			roomName: ''
 		}
-		connectPlayer(newPlayer)(dispatch)
+		createPlayer(newPlayer)(dispatch);
 	}
 
 	const enterOrLeaveRoom = (room) => {
@@ -105,7 +105,7 @@ const Home = () => {
 			roomName: room ? room.name : ''
 		}
 		setSelectedRoom(room)
-		dispatch(updatePlayer(updatedPlayer))
+		updatePlayer(updatedPlayer)(dispatch);
 	}
 
 	const onCreateRoom = (event) => {

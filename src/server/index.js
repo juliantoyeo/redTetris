@@ -37,11 +37,11 @@ const initEngine = (io) => {
 		// });
 
 		socket.on('createPlayer', (playerData, callback) => {
-			console.log(`msg: ${playerData.name}`);
+			const { name, roomName } = playerData;
 			if (clients.findIndex((client) => client.name == playerData.name) == -1) {
 				clients.push({
-					name: playerData.name,
-					board: null
+					name,
+					roomName,
 				});
 				callback({
 					status: 200,
@@ -55,6 +55,35 @@ const initEngine = (io) => {
 				});
 			}
 			socket.emit('createPlayer', playerData);
+		});
+
+		socket.on('updatePlayer', (currentPlayer, callback) => {
+			const { connected, name, roomName } = currentPlayer;
+			const index = clients.findIndex((client) => client.name == currentPlayer.name);
+			if (index == -1) {
+				callback({
+					status: 404,
+					msg: 'NAME_DOESNT_EXIST'
+				});
+			}
+			else if (clients.findIndex((client) => client.roomName == currentPlayer.roomName) != -1) {
+				callback({
+					status: 405,
+					msg: 'ROOM_EXIST'
+				});
+			}
+			else {
+				clients.splice(index, 1, {
+					connected,
+					name,
+					roomName,
+				});
+				callback({
+					status: 200,
+					msg: 'UPDATED'
+				});
+			}
+			socket.emit('updatePlayer', currentPlayer);
 		});
 	});
 };
