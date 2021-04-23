@@ -8,7 +8,7 @@ const reducer = (state, action) => {
 	case ROOM_ACTIONS.ADD_ROOM:
 		return [ ...state, action.newRoom ]
 	case ROOM_ACTIONS.DELETE_ROOM:
-			return _.filter(state, (room) => room.name !== action.roomToDelete.name)
+			return _.filter(state, (room) => room.name !== action.roomName)
 	case ROOM_ACTIONS.UPDATE_ROOM:
 			return _.unionBy([action.updatedRoom], state, 'name')
 	default:

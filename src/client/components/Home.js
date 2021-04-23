@@ -135,7 +135,7 @@ const Home = () => {
 			players: _.filter(room.players, (player) => player !== currentPlayer.name)
 		}
 		if (updatedRoom.players.length === 0)
-			dispatch(deleteRoom(updatedRoom))
+			dispatch(deleteRoom(updatedRoom.name))
 		else
 			dispatch(updateRoom(updatedRoom))
 		enterOrLeaveRoom(null)

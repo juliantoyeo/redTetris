@@ -7,10 +7,10 @@ export const addRoom = (newRoom) => {
 	}
 }
 
-export const deleteRoom = (roomToDelete) => {
+export const deleteRoom = (roomName) => {
 	return {
 		type: ROOM_ACTIONS.DELETE_ROOM,
-		roomToDelete
+		roomName
 	}
 }
 
