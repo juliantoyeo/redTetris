@@ -35,7 +35,7 @@ const RoomCreationForm = (props) => {
 					style={styles.input}
 					type={'number'}
 					onChange={(e) => onChange(e, 'maxPlayer')}
-					defaultValue={1}
+					defaultValue={2}
 					required
 					step={'1'}
 					min={'1'}

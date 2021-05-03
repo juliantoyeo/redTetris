@@ -28,26 +28,25 @@ const styles = {
 }
 
 const RoomDisplay = (props) => {
-	const { room, onClick, onLeave } = props
+	const { room, isLobby, isOwner, onClick, onLeave } = props
 	const [state] = useContext(combinedContext)
 
 	if (!room)
 		return (<div style={styles.mainContainer} key={'empty'}><span>No room to join</span></div>)
 
 	let canJoin = true
-	const isLobby = state.currentPlayer.roomName === room.name
 	const playerCount = room.players.length
 	if (playerCount === room.maxPlayer)
 		canJoin = false
 	return (
 		<div style={styles.mainContainer} key={`${room.name}#`}>
 			<span style={styles.text}>Room Name : {room.name}</span>
-			<span style={styles.text}>Created By : {room.creator}</span>
+			<span style={styles.text}>Room Owner : {room.owner}</span>
 			<span style={styles.text}>Player Count : {`${playerCount}/${room.maxPlayer}`}</span>
 			{isLobby ?
 			<div style={styles.buttonContainer}>
 				<Button style={{ width: '40%' }} type={'button'} onClick={() => onLeave(room)} text={'Leave'} />
-				<Button style={{ width: '40%', backgroundColor: `rgba(${COLORS.DARK_GREEN}, 1)` }} type={'button'} onClick={() => onClick(room)} text={'Start'} />
+				{isOwner && <Button style={{ width: '40%', backgroundColor: `rgba(${COLORS.DARK_GREEN}, 1)` }} type={'button'} onClick={() => onClick(room)} text={'Start'} />}
 			</div> :
 				<Button style={{ width: '15%' }} type={'button'} onClick={() => onClick(room)} isDisable={!canJoin} text={canJoin ? 'Join' : 'Full'} />
 			}

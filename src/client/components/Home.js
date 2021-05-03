@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { updatePlayer, createPlayer } from '../actions/playerActions'
 import { initiateSocket, disconnectSocket } from '../actions/server';
 import { addRoom, deleteRoom, updateRoom } from '../actions/roomActions'
+import { SOCKET_RES, SOCKET_ACTIONS } from '../../constants/socketConstants'
 
 import combinedContext from '../contexts/combinedContext'
 
@@ -52,7 +53,7 @@ const Home = () => {
 	const [state, dispatch] = useContext(combinedContext);
 
 	const [socket, setSocket] = useState(null);
-	const [form, setForm] = useState({ playerName: '', roomName: '', maxPlayer: 1 });
+	const [form, setForm] = useState({ playerName: '', roomName: '', maxPlayer: 2 });
 	const [selectedRoom, setSelectedRoom] = useState(null);
 
 	const { currentPlayer, rooms } = state;
@@ -62,24 +63,47 @@ const Home = () => {
 	useEffect(() => {
 		setSocket(initiateSocket())
 
-		return () => {
-			disconnectSocket(socket);
-		}
+		
 		// const newPlayer = {
 		// 	name: 'player123',
 		// 	roomName: 'hsdjasjh'
 		// }
 		// const newRoom = {
 		// 	name:'testRoom',
-		// 	creator:'im here',
+		// 	owner:'im here',
 		// 	players: ['im here'],
 		// 	maxPlayer: 2
 		// }
+		// addRoom(initSocket, newRoom)(dispatch)
 		// dispatch(createPlayer(newPlayer))
 		// dispatch(addRoom(newRoom))
 		// dispatch(addRoom(newRoom))
 		// dispatch(addRoom(newRoom))
+
+		return () => {
+			disconnectSocket(socket);
+		}
 	}, [])
+
+	useEffect(() => {
+		if (socket) {
+			socket.on(SOCKET_ACTIONS.CREATE_ROOM, (newRoom) => {
+				console.log('WebSocket createRoom event received :', newRoom)
+				dispatch(addRoom(newRoom))
+				return
+			});
+			socket.on(SOCKET_ACTIONS.DELETE_ROOM, (roomName) => {
+				console.log('WebSocket deleteRoom event received :', roomName)
+				dispatch(deleteRoom(roomName))
+				return
+			});
+			socket.on(SOCKET_ACTIONS.UPDATE_ROOM, (updatedRoom) => {
+				console.log('WebSocket updateRoom event received :', updatedRoom)
+				dispatch(updateRoom(updatedRoom))
+				return
+			});
+		}
+	}, [socket])
 
 	const onFormChange = (event, type) => {
 		const value = event.target.value
@@ -89,7 +113,6 @@ const Home = () => {
 			maxPlayer: type === 'maxPlayer' ? parseInt(value) : prev.maxPlayer,
 		}))
 	}
-
 
 	const onSubmitName = async (event) => {
 		event.preventDefault()
@@ -113,12 +136,37 @@ const Home = () => {
 		event.preventDefault()
 		const newRoom = {
 			name: form.roomName,
-			creator: currentPlayer.name,
+			owner: currentPlayer.name,
 			players: [currentPlayer.name],
 			maxPlayer: form.maxPlayer
 		}
-		addRoom(socket, newRoom)(dispatch)
-		enterOrLeaveRoom(newRoom)
+		if (socket) socket.emit(SOCKET_ACTIONS.CREATE_ROOM, newRoom, (res) => {
+			if (res.msg == SOCKET_RES.ROOM_CREATED) {
+				enterOrLeaveRoom(newRoom)
+			} else {
+				alert('Room name exist, please try a different name')
+			}
+		});
+	}
+
+	const doDeleteRoom = (roomName) => {
+		if (socket) socket.emit(SOCKET_ACTIONS.DELETE_ROOM, roomName, (res) => {
+			if (res.msg == SOCKET_RES.ROOM_DELETED) {
+				enterOrLeaveRoom(null)
+			} else {
+				alert('Room does not exist, please try again')
+			}
+		})
+	}
+
+	const doUpdateRoom = (updatedRoom, isJoinRoom) => {
+		if (socket) socket.emit(SOCKET_ACTIONS.UPDATE_ROOM, updatedRoom, (res) => {
+			if (res.msg == SOCKET_RES.ROOM_UPDATED) {
+				enterOrLeaveRoom(isJoinRoom ? updatedRoom : null)
+			} else {
+				alert('Room does not exist, please try a different room')
+			}
+		});
 	}
 
 	const onJoinRoom = (room) => {
@@ -126,20 +174,21 @@ const Home = () => {
 			...room,
 			players: [...room.players, currentPlayer.name]
 		}
-		updateRoom(socket, updatedRoom)(dispatch);
-		enterOrLeaveRoom(updatedRoom)
+		doUpdateRoom(updatedRoom, true)
 	}
 
-	const onLeaveGame = (room) => {
+	const onLeaveRoom = (room) => {
+		const isOwnerLeaving = currentPlayer.name === room.owner
+		const newPlayerList = _.filter(room.players, (player) => player !== currentPlayer.name)
 		const updatedRoom = {
 			...room,
-			players: _.filter(room.players, (player) => player !== currentPlayer.name)
+			players: newPlayerList,
+			owner: isOwnerLeaving ? _.head(newPlayerList): room.owner
 		}
 		if (updatedRoom.players.length === 0)
-			deleteRoom(socket, updatedRoom.name)(dispatch);
+			doDeleteRoom(updatedRoom.name)
 		else
-			updateRoom(socket, updatedRoom)(dispatch);
-		enterOrLeaveRoom(null)
+			doUpdateRoom(updatedRoom, false)
 	}
 
 	const onStartGame = (room) => {
@@ -147,8 +196,10 @@ const Home = () => {
 	}
 
 	const getRooms = () => {
-		if (selectedRoom)
-			return <RoomDisplay room={_.find(rooms, (room) => room.name === currentPlayer.roomName)} onClick={onStartGame} onLeave={onLeaveGame}/>
+		if (selectedRoom) {
+			const room = _.find(rooms, (room) => room.name === selectedRoom.name)
+			if (room) return <RoomDisplay room={room} isLobby={true} isOwner={room.owner === currentPlayer.name} onClick={onStartGame} onLeave={onLeaveRoom}/>
+		}
 		else if (!_.isEmpty(rooms))
 			return _.map(rooms, (room, index) => <RoomDisplay room={room} onClick={onJoinRoom} key={`${room.name}#${index}`} />)
 		return <RoomDisplay room={null} onClick={null} />

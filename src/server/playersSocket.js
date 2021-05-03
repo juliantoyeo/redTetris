@@ -31,12 +31,12 @@ export const playersSocket = (clients, socket) => {
 				msg: 'NAME_DOESNT_EXIST'
 			});
 		}
-		else if (clients.findIndex((client) => client.roomName == currentPlayer.roomName) != -1) {
-			callback({
-				status: 405,
-				msg: 'ROOM_EXIST'
-			});
-		}
+		// else if (clients.findIndex((client) => client.roomName == currentPlayer.roomName) != -1) {
+		// 	callback({
+		// 		status: 405,
+		// 		msg: 'ROOM_EXIST'
+		// 	});
+		// }
 		else {
 			clients.splice(index, 1, {
 				connected,

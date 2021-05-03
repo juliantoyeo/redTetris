@@ -43,7 +43,7 @@ const initEngine = (io) => {
 		console.log('connected', socket.id);
 
 		playersSocket(clients, socket);
-		roomSocket(rooms, socket);
+		roomSocket(rooms, io, socket);
 	});
 };
 
