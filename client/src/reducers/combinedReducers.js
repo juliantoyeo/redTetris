@@ -1,12 +1,12 @@
-import { useReducer } from 'react'
-import playerReducer, { playerInitialState } from './playerReducer'
-import roomReducer, { roomsInitialState } from './roomReducer'
+import { useReducer } from 'react';
+import playerReducer, { playerInitialState } from './playerReducer';
+import roomReducer, { roomsInitialState } from './roomReducer';
 
 const useCombinedReducers = () => {
 
 	const combinedReducers = {
 		currentPlayer: useReducer(playerReducer, playerInitialState),
-		rooms: useReducer(roomReducer, roomsInitialState),
+		rooms: useReducer(roomReducer, roomsInitialState)
 	}
 
 	// Global State

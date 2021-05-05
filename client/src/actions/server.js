@@ -1,5 +1,5 @@
 import socketIOClient from 'socket.io-client';
-import params from '../params'
+import params from '../params';
 
 export const ping = () => {
 	return ({
@@ -12,6 +12,6 @@ export const initiateSocket = () => {
 };
 
 export const disconnectSocket = (socket) => {
-	console.log("disconnecting socket")
+	console.log('disconnecting socket');
 	if (socket) socket.disconnect();
 };

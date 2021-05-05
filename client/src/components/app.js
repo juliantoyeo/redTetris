@@ -1,9 +1,9 @@
 import React from 'react'
-import '@babel/polyfill' // for aysnc function
+import '@babel/polyfill/noConflict' // for aysnc function
 import {
 	HashRouter as Router,
 	Switch,
-	Route,
+	Route
 } from 'react-router-dom';
 import Tetris from './Tetris'
 import Home from './Home'

@@ -1,15 +1,17 @@
-import React from 'react'
-import Button from '../subComponents/Button'
-import { MAX_PLAYER } from '../../constants/gameConstant'
+import React from 'react';
+import PropTypes from 'prop-types';
+
+import Button from '../subComponents/Button';
+import { MAX_PLAYER } from '../../constants/gameConstant';
 
 const styles = {
 	input: {
 		width: '20%'
-	},
+	}
 }
 
 const RoomCreationForm = (props) => {
-	const { onSubmit, onChange } = props
+	const { onSubmit, onChange } = props;
 	return (
 		<div className={'formContainer'}>
 			<span className={'header'}>Create Room</span>
@@ -47,4 +49,9 @@ const RoomCreationForm = (props) => {
 	)
 }
 
-export default RoomCreationForm
+RoomCreationForm.propTypes = {
+	onSubmit: PropTypes.func,
+	onChange: PropTypes.func
+};
+
+export default RoomCreationForm;

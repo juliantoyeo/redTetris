@@ -45,7 +45,7 @@
             }
         ], // indentation
         "react/prop-types": 1, // propTypes
-        "no-comma-dangle": 0, // virgule innutile à la fin d'un objet
+        "comma-dangle": 1, // virgule innutile à la fin d'un objet
         "quotes": [1, "single", { "avoidEscape": true }] // seulement des quotes simples sauf quand c'est pas possible
     }
 }

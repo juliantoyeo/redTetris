@@ -1,6 +1,8 @@
-import React from 'react'
-import Button from './subComponents/Button'
-import { COLORS } from '../constants/gameConstant'
+import React from 'react';
+import PropTypes from 'prop-types';
+
+import Button from './subComponents/Button';
+import { COLORS } from '../constants/gameConstant';
 
 const styles = {
 	mainContainer: {
@@ -10,7 +12,7 @@ const styles = {
 		borderRadius: '3vw',
 		justifyContent: 'space-around',
 		height: '5vw',
-		margin: '1vw 0',
+		margin: '1vw 0'
 	},
 	buttonContainer: {
 		width: '20%',
@@ -22,20 +24,20 @@ const styles = {
 		whiteSpace: 'nowrap',
 		textAlign: 'left',
 		overflow: 'hidden',
-		textOverflow: 'ellipsis',
-	},
+		textOverflow: 'ellipsis'
+	}
 }
 
 const RoomDisplay = (props) => {
-	const { room, isLobby, isOwner, onClick, onLeave } = props
+	const { room, isLobby, isOwner, onClick, onLeave } = props;
 
 	if (!room)
-		return (<div style={styles.mainContainer} key={'empty'}><span>No room to join</span></div>)
+		return (<div style={styles.mainContainer} key={'empty'}><span>No room to join</span></div>);
 
-	let canJoin = true
-	const playerCount = room.players.length
+	let isFull = false;
+	const playerCount = room.players.length;
 	if (playerCount === room.maxPlayer)
-		canJoin = false
+		isFull = true;
 	return (
 		<div style={styles.mainContainer} key={`${room.name}#`}>
 			<span style={styles.text}>Room Name : {room.name}</span>
@@ -46,10 +48,18 @@ const RoomDisplay = (props) => {
 					<Button style={{ width: '40%' }} type={'button'} onClick={() => onLeave(room)} text={'Leave'} />
 					{isOwner && <Button style={{ width: '40%', backgroundColor: `rgba(${COLORS.DARK_GREEN}, 1)` }} type={'button'} onClick={() => onClick(room)} text={'Start'} />}
 				</div> :
-				<Button style={{ width: '15%' }} type={'button'} onClick={() => onClick(room)} isDisable={!canJoin} text={canJoin ? 'Join' : 'Full'} />
+				<Button style={{ width: '15%' }} type={'button'} onClick={() => onClick(room)} isDisable={isFull} text={isFull ? 'Full' : 'Join'} />
 			}
 		</div>
 	)
 }
 
-export default RoomDisplay
+RoomDisplay.propTypes = {
+	room: PropTypes.object,
+	isLobby: PropTypes.bool,
+	isOwner: PropTypes.bool,
+	onClick: PropTypes.func,
+	onLeave: PropTypes.func
+};
+
+export default RoomDisplay;

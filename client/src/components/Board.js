@@ -1,8 +1,9 @@
-import React from 'react'
-import _ from 'lodash'
+import React from 'react';
+import _ from 'lodash';
+import PropTypes from 'prop-types';
 
-import { CELL_SIZE } from '../constants/gameConstant'
-import Cell from './Cell'
+import { CELL_SIZE } from '../constants/gameConstant';
+import Cell from './Cell';
 
 const mainContainerStyle = (props) => {
 	return ({
@@ -15,31 +16,31 @@ const mainContainerStyle = (props) => {
 		width: '100%',
 		maxWidth: `${CELL_SIZE * props.width}vw`,
 		background: 'black'
-	})
+	});
 }
 
 const Board = (props) => {
-	const { board, mini } = props
+	const { board, mini } = props;
 
 	const getHeight = () => {
 		if (!mini)
-			return (board.length)
+			return (board.length);
 		else {
 			let rowCount = 0
 			for(let i = 0; i < board.length; i++) {
 				if (checkShouldPrintRow(board[i]))
-					rowCount++
+					rowCount++;
 			}
-			return rowCount
+			return rowCount;
 		}
 	}
 
 	const checkShouldPrintRow = (row) => {
 		if (!mini)
-			return true
+			return true;
 		for(let i = 0; i < row.length; i++) {
 			if (row[i] !== '0')
-				return true
+				return true;
 		}
 	}
 
@@ -51,13 +52,18 @@ const Board = (props) => {
 						_.map(row, (cell, x) => {
 							return (
 								<Cell key={x} type={cell} />
-							)
+							);
 						})
-					)
+					);
 				}
 			})}
 		</div>
 	)
 }
 
-export default Board
+Board.propTypes = {
+	board: PropTypes.array,
+	mini: PropTypes.bool
+};
+
+export default Board;

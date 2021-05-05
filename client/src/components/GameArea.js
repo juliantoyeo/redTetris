@@ -1,14 +1,15 @@
-import React, { useContext } from 'react'
-import combinedContext from '../contexts/combinedContext'
-import Board from './Board'
-import Button from './subComponents/Button'
-import { CELL_SIZE } from '../constants/gameConstant'
+import React, { useContext } from 'react';
+import PropTypes from 'prop-types';
+import combinedContext from '../contexts/combinedContext';
+import Board from './Board';
+import Button from './subComponents/Button';
+import { CELL_SIZE } from '../constants/gameConstant';
 
 const styles = {
 	mainContainer: {
 		width: '50%',
 		maxWidth: '50vw',
-		display: 'flex',
+		display: 'flex'
 		// flexDireaction: 'row',
 		// alignItems: 'flex-start',
 		// flexWrap: 'wrap',
@@ -18,7 +19,7 @@ const styles = {
 		// border: '1px solid white'
 	},
 	boardContainer: {
-		width: '60%',
+		width: '60%'
 		// background: 'black'
 		// border: '1px solid white'
 	},
@@ -55,16 +56,15 @@ const styles = {
 		borderRadius: '2vw',
 		border: '2px solid #333',
 		padding: '1vw',
-		
 		margin: '1vw 0',
 		height: '20vw'
 	}
 }
 
 const GameArea = (props) => {
-	const {board, piece, gameOver, gameStatus, startGame} = props
-	const [state] = useContext(combinedContext)
-	const { currentPlayer } = state
+	const {board, piece, gameOver, gameStatus, startGame} = props;
+	const [state] = useContext(combinedContext);
+	const { currentPlayer } = state;
 
 	return (
 		<div style={styles.mainContainer}>
@@ -88,4 +88,12 @@ const GameArea = (props) => {
 	)
 }
 
-export default GameArea
+GameArea.propTypes = {
+	board: PropTypes.array,
+	piece: PropTypes.object,
+	gameOver: PropTypes.bool,
+	gameStatus: PropTypes.object,
+	startGame: PropTypes.func
+};
+
+export default GameArea;

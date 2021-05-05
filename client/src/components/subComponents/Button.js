@@ -1,5 +1,6 @@
-import React from 'react'
-import { COLORS } from '../../constants/gameConstant'
+import React from 'react';
+import PropTypes from 'prop-types';
+import { COLORS } from '../../constants/gameConstant';
 
 const styles = {
 	mainContainer: {
@@ -11,22 +12,22 @@ const styles = {
 		cursor: 'pointer',
 		backgroundColor: `rgba(${COLORS.DARK_RED}, 1)`,
 		borderRadius: '1vw',
-		fontSize: '1em',
+		fontSize: '1em'
 	},
 	disable: {
 		cursor: 'cursor',
-		backgroundColor: `rgba(${COLORS.RED}, 1)`,
+		backgroundColor: `rgba(${COLORS.RED}, 1)`
 	}
 }
 
 const Button = (props) => {
-	const { type, style, onClick, text, isDisable } = props
+	const { type, style, onClick, text, isDisable } = props;
 
 	const onButtonClick = () => {
 		if (isDisable)
-			return
+			return;
 		else if (onClick)
-			onClick()
+			onClick();
 	}
 
 	return (
@@ -34,4 +35,12 @@ const Button = (props) => {
 	)
 }
 
-export default Button
+Button.propTypes = {
+	type: PropTypes.string,
+	style: PropTypes.object,
+	onClick: PropTypes.func,
+	text: PropTypes.string,
+	isDisable: PropTypes.bool
+};
+
+export default Button;

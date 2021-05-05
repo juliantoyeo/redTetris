@@ -1,15 +1,16 @@
-import React from 'react'
-import Button from '../subComponents/Button'
+import React from 'react';
+import PropTypes from 'prop-types';
+import Button from '../subComponents/Button';
 
 const styles = {
 	form: {
 		flexDirection: 'column',
-		height: '15vw',
-	},
+		height: '15vw'
+	}
 }
 
 const NameForm = (props) => {
-	const { onSubmit, onChange } = props
+	const { onSubmit, onChange } = props;
 	return (
 		<div className={'formContainer'}>
 			<span className={'header'}>Welcome to Red Tetris!</span>
@@ -32,4 +33,9 @@ const NameForm = (props) => {
 	)
 }
 
-export default NameForm
+NameForm.propTypes = {
+	onSubmit: PropTypes.func,
+	onChange: PropTypes.func
+};
+
+export default NameForm;
