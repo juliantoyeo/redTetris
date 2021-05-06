@@ -48,7 +48,11 @@ const App = () => {
 			// players: ['aaaa'],
 			// players: ['aaaa', 'bbbb'],
 			// players: ['aaaa', 'bbbb', 'cccc'],
-			players: ['aaaa', 'bbbb', 'cccc', 'dddd'],
+			// players: ['aaaa', 'bbbb', 'cccc', 'dddd'],
+			// players: ['aaaa', 'bbbb', 'cccc', 'dddd', 'eeee'],
+			// players: ['aaaa', 'bbbb', 'cccc', 'dddd', 'eeee', 'ffff'],
+			// players: ['aaaa', 'bbbb', 'cccc', 'dddd', 'eeee', 'ffff', 'gggg'],
+			players: ['aaaa', 'bbbb', 'cccc', 'dddd', 'eeee', 'ffff', 'gggg', 'hhhh'],
 			maxPlayer: 10
 		}
 

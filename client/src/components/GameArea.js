@@ -3,16 +3,24 @@ import PropTypes from 'prop-types';
 import combinedContext from '../contexts/combinedContext';
 import Board from './Board';
 import Button from './subComponents/Button';
-import { CELL_SIZE } from '../constants/gameConstant';
+import { CELL_SIZE, BOARD_SIZE } from '../constants/gameConstant';
 
 const mainContainerStyle = (props) => {
 	return ({
+		boxSizing: 'border-box',
 		width: props.numberOfPlayer > 3 ?'25%' : '33.33%',
 		maxWidth: '50vw',
 		display: 'flex',
-		margin: '0.5vw',
+		justifyContent: 'space-evenly',
+		// margin: '0.5vw',
 		fontSize: props.numberOfPlayer > 3 ?'0.8vw' : '1vw',
 		border: '1px solid #333'
+	});
+}
+
+const boardContainerStyle = (props) => {
+	return ({
+		width: `${props.cellSize * BOARD_SIZE.WIDTH}vw`
 	});
 }
 
@@ -73,7 +81,7 @@ const GameArea = (props) => {
 
 	return (
 		<div style={mainContainerStyle({ numberOfPlayer: numberOfPlayer })}>
-			<div style={styles.boardContainer}>
+			<div style={boardContainerStyle({ cellSize: cellSize })}>
 				<Board board={board} cellSize={cellSize} numberOfPlayer={numberOfPlayer} />
 			</div>
 			<div style={styles.sideContainer}>

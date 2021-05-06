@@ -3,9 +3,9 @@ export const BOARD_SIZE = {
 	HEIGHT: 20
 }
 
-export const MAX_PLAYER = 4;
+export const MAX_PLAYER = 8;
 
-export const CELL_SIZE = 2;
+export const CELL_SIZE = 1.5;
 
 export const COLORS = {
 	BLACK: '50, 50, 50',

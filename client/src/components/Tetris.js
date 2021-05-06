@@ -12,18 +12,22 @@ import { useBoard } from '../hooks/useBoard';
 import { useGameStatus } from '../hooks/useGameStatus';
 import { KEY_CODE } from '../constants/gameConstant';
 
-const styles = {
-	mainContainer: {
+
+const mainContainerStyle = (props) => {
+	return ({
 		boxSizing: 'border-box',
 		display: 'flex',
+		// flexDirection: 'column',
+		flexWrap: 'wrap',
+		justifyContent: props.numberOfPlayer > 2 ? 'flex-start' : 'space-evenly',
 		alignItems: 'center',
 		width: '100vw',
-		height: '100vh',
+		minHeight: '100vh',
 		backgroundColor: '#555',
 		backgroundSize: 'cover',
 		fontFamily: 'Avenir Next',
 		fontSize: '1vw'
-	}
+	})
 }
 
 const Tetris = (props) => {
@@ -38,6 +42,7 @@ const Tetris = (props) => {
 	const [piece, ghostPiece, updatePiece, getPiece, pieceRotate] = usePiece();
 	const [board, setBoard, boardWithLandedPiece, setBoardWithLandedPiece, rowsCleared] = useBoard(piece, ghostPiece, getPiece, gameOver);
 	const [gameStatus, setGameStatus] = useGameStatus(rowsCleared);
+	const [numberOfPlayer, setNumberOfPlayer] = useState(1);
 
 	// let numberOfPlayer = 1;
 
@@ -49,9 +54,16 @@ const Tetris = (props) => {
 
 	useEffect(() => {
 		console.log(socket)
-		const room = _.find(state.rooms, (room) => room.name === roomName);
-		// numberOfPlayer = room.players.length;
-		setCurrentRoom(room);
+		
+		if (state.rooms) {
+			const room = _.find(state.rooms, (room) => room.name === roomName);
+			if (room) {
+				// numberOfPlayer = room.players.length;
+				setNumberOfPlayer(room.players.length);
+				setCurrentRoom(room);
+			}
+		}
+		
 	}, [state.rooms]);
 
 	useEffect(() => {
@@ -157,14 +169,13 @@ const Tetris = (props) => {
 	}, dropTime);
 
 	const drawGameArea = () => {
-		const numberOfPlayer = currentRoom.players.length;
 		return _.map(currentRoom.players, (player) => {
 			return <GameArea key={player} board={board} piece={piece} gameOver={gameOver} gameStatus={gameStatus} startGame={startGame} numberOfPlayer={numberOfPlayer}/>
 		})
 	}
 
 	return (
-		<div style={styles.mainContainer} role={'button'} tabIndex={'0'} onKeyDown={(e) => move(e)} onKeyUp={keyUp}>
+		<div style={mainContainerStyle({ numberOfPlayer: numberOfPlayer})} role={'button'} tabIndex={'0'} onKeyDown={(e) => move(e)} onKeyUp={keyUp}>
 			{currentRoom && drawGameArea()}
 		</div>
 	)
