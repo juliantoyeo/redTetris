@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
+import PropTypes from 'prop-types';
+import _ from 'lodash';
 import { useHistory } from 'react-router-dom';
 
 import { updatePlayer, createPlayer } from '../actions/playerActions';
-import { initiateSocket, disconnectSocket } from '../actions/server';
 import { addRoom, deleteRoom, updateRoom } from '../actions/roomActions';
 import { SOCKET_RES, SOCKET_ACTIONS } from '../constants/socketConstants';
 
@@ -11,7 +12,7 @@ import combinedContext from '../contexts/combinedContext';
 import RoomDisplay from './RoomDisplay';
 import NameForm from './form/NameForm';
 import RoomCreationForm from './form/RoomCreationForm';
-import _ from 'lodash';
+
 
 const styles = {
 	mainContainer: {
@@ -47,12 +48,12 @@ const styles = {
 	}
 }
 
-const Home = () => {
-
+const Home = (props) => {
+	const { socket } = props;
 	const history = useHistory();
 	const [state, dispatch] = useContext(combinedContext);
 
-	const [socket, setSocket] = useState(null);
+	// const [socket, setSocket] = useState(null);
 	const [form, setForm] = useState({ playerName: '', roomName: '', maxPlayer: 2 });
 	const [selectedRoom, setSelectedRoom] = useState(null);
 
@@ -61,7 +62,7 @@ const Home = () => {
 	console.log('state', state);
 
 	useEffect(() => {
-		setSocket(initiateSocket());
+		// setSocket(initiateSocket());
 
 
 		// const newPlayer = {
@@ -80,9 +81,9 @@ const Home = () => {
 		// dispatch(addRoom(newRoom))
 		// dispatch(addRoom(newRoom))
 
-		return () => {
-			disconnectSocket(socket);
-		}
+		// return () => {
+		// 	disconnectSocket(socket);
+		// }
 	}, []);
 
 	useEffect(() => {
@@ -221,5 +222,9 @@ const Home = () => {
 		</div>
 	);
 }
+
+Home.propTypes = {
+	socket: PropTypes.object
+};
 
 export default Home;

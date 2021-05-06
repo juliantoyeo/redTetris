@@ -2,25 +2,24 @@ import React from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 
-import { CELL_SIZE } from '../constants/gameConstant';
 import Cell from './Cell';
 
 const mainContainerStyle = (props) => {
 	return ({
 		margin: '0 auto',
 		display: 'grid',
-		gridTemplateRows: `repeat(${props.height}, calc(${CELL_SIZE}vw))`,
+		gridTemplateRows: `repeat(${props.height}, calc(${props.cellSize}vw))`,
 		gridTemplateColumns: `repeat(${props.width}, 1fr)`,
 		gridGap: '1px',
 		// border: '2px solid #333',
 		width: '100%',
-		maxWidth: `${CELL_SIZE * props.width}vw`,
+		maxWidth: `${props.cellSize * props.width}vw`,
 		background: 'black'
 	});
 }
 
 const Board = (props) => {
-	const { board, mini } = props;
+	const { board, cellSize, numberOfPlayer, mini } = props;
 
 	const getHeight = () => {
 		if (!mini)
@@ -45,13 +44,13 @@ const Board = (props) => {
 	}
 
 	return (
-		<div style={mainContainerStyle({ width: board[0].length, height: getHeight() })}>
+		<div style={mainContainerStyle({ width: board[0].length, height: getHeight(), cellSize: cellSize })}>
 			{_.map(board, (row) => {
 				if (checkShouldPrintRow(row)) {
 					return (
 						_.map(row, (cell, x) => {
 							return (
-								<Cell key={x} type={cell} />
+								<Cell key={x} type={cell} numberOfPlayer={numberOfPlayer} />
 							);
 						})
 					);
@@ -63,6 +62,8 @@ const Board = (props) => {
 
 Board.propTypes = {
 	board: PropTypes.array,
+	cellSize: PropTypes.number,
+	numberOfPlayer: PropTypes.number,
 	mini: PropTypes.bool
 };
 

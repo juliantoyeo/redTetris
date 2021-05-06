@@ -4,6 +4,7 @@ import debug from 'debug';
 import { playersSocket } from './playersSocket';
 import { roomSocket } from './roomsSocket';
 
+import { SOCKET_ACTIONS } from '../client/src/constants/socketConstants'
 
 const logerror = debug('tetris:error');
 const loginfo = debug('tetris:info');
@@ -15,9 +16,17 @@ const rooms = new Array();
 const initApp = (app, params, cb) => {
 	const { host, port } = params;
 	const handler = (req, res) => {
-		const file = req.url === '/bundle.js' ? '/../../build/bundle.js' : '/../../index.html';
-		fs.readFile(__dirname + file, (err, data) => {
+		// console.log('req', req.url)
+		// console.log('res', res)
+		// const file = req.url === '/bundle.js' ? '/../../build/bundle.js' : '/../../index.html';
+		let file = '../client/build';
+		if (req.url === '/')
+			file = `${file}/index.html`;
+		else
+			file = `${file}${req.url}`;
+		fs.readFile(file, (err, data) => {
 			if (err) {
+				console.log('err', err)
 				logerror(err);
 				res.writeHead(500);
 				return (res.end('Error loading index.html'));
@@ -42,6 +51,11 @@ const initEngine = (io) => {
 		}); // not safe need verification ?
 		// socket.on('create', (room) => console.log(`CREATED ${room} \n\n`))
 
+		// socket.on('join', (room) => {
+		// 	console.log(`Socket ${socket.id} joining ${room}`);
+		// 	socket.join(room);
+		// });
+		console.log('connected', socket.id);
 		playersSocket(clients, socket);
 		roomSocket(rooms, io, socket);
 	});

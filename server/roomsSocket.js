@@ -89,4 +89,12 @@ export const roomSocket = (rooms, io, socket) => {
 			io.sockets.emit(SOCKET_ACTIONS.DELETE_ROOM, roomName);
 		}
 	});
+
+	socket.on(SOCKET_ACTIONS.FECTH_ALL_ROOM, (callback) => {
+		callback({
+			status: 200,
+			msg: 'SUCCESS',
+			rooms
+		});
+	});
 };

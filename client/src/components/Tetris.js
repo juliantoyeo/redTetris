@@ -1,7 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import GameArea from './GameArea';
-import { createBoard, checkCollision } from '../utils/boardUtils';
+import React, { useState, useEffect, useContext } from 'react';
+import PropTypes from 'prop-types';
+import _ from 'lodash';
+import { useParams } from 'react-router-dom';
 
+import GameArea from './GameArea';
+import combinedContext from '../contexts/combinedContext';
+import { createBoard, checkCollision } from '../utils/boardUtils';
 import { useInterval } from '../hooks/useInterval';
 import { usePiece } from '../hooks/usePiece';
 import { useBoard } from '../hooks/useBoard';
@@ -22,8 +26,12 @@ const styles = {
 	}
 }
 
-const Tetris = () => {
+const Tetris = (props) => {
+	const { socket } = props;
+	const { roomName, playerName } = useParams();
+	const [state, dispatch] = useContext(combinedContext);
 	const defaulDropTime = 1000;
+	const [currentRoom, setCurrentRoom] = useState(null);
 	const [dropTime, setDropTime] = useState(null);
 	const [currentDropTime, setCurrentDropTime] = useState(defaulDropTime);
 	const [gameOver, setGameOver] = useState(true);
@@ -31,13 +39,20 @@ const Tetris = () => {
 	const [board, setBoard, boardWithLandedPiece, setBoardWithLandedPiece, rowsCleared] = useBoard(piece, ghostPiece, getPiece, gameOver);
 	const [gameStatus, setGameStatus] = useGameStatus(rowsCleared);
 
-	// console.log("location", location)
-	// console.log("roomName", roomName)
-	// console.log("playerName", playerName)
+	// let numberOfPlayer = 1;
+
+	// console.log('location', location)
+	console.log('state', state)
+	console.log('roomName', roomName)
+	console.log('playerName', playerName)
+	console.log('currentRoom', currentRoom)
 
 	useEffect(() => {
-		// console.log(test)
-	}, [piece]);
+		console.log(socket)
+		const room = _.find(state.rooms, (room) => room.name === roomName);
+		// numberOfPlayer = room.players.length;
+		setCurrentRoom(room);
+	}, [state.rooms]);
 
 	useEffect(() => {
 		if (checkCollision(piece, boardWithLandedPiece, { x: 0, y: 0 })) {
@@ -141,12 +156,23 @@ const Tetris = () => {
 		drop();
 	}, dropTime);
 
+	const drawGameArea = () => {
+		const numberOfPlayer = currentRoom.players.length;
+		return _.map(currentRoom.players, (player) => {
+			return <GameArea key={player} board={board} piece={piece} gameOver={gameOver} gameStatus={gameStatus} startGame={startGame} numberOfPlayer={numberOfPlayer}/>
+		})
+	}
+
 	return (
 		<div style={styles.mainContainer} role={'button'} tabIndex={'0'} onKeyDown={(e) => move(e)} onKeyUp={keyUp}>
-			<GameArea board={board} piece={piece} gameOver={gameOver} gameStatus={gameStatus} startGame={startGame} />
-			<GameArea board={board} piece={piece} gameOver={gameOver} gameStatus={gameStatus} startGame={startGame} />
+			{currentRoom && drawGameArea()}
 		</div>
 	)
 }
+
+Tetris.propTypes = {
+	socket: PropTypes.object
+};
+
 
 export default Tetris;

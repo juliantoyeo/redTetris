@@ -3,10 +3,13 @@ import PropTypes from 'prop-types';
 import { PIECES } from '../constants/gameConstant';
 
 const mainContainerStyle = (props) => {
+	let borderWidth = 0.5;
+	if (props.numberOfPlayer > 3)
+		borderWidth = 0.4;
 	return ({
 		width: 'auto',
 		background: `rgba(${props.color}, 0.8)`,
-		border: `${props.type === '0' ? '1px solid' : '0.6vw solid'}`,
+		border: `${props.type === '0' ? '1px solid' : `${borderWidth}vw solid`}`,
 		borderColor: `rgba(${props.color}, 1)`
 		// borderBottomColor: `rgba(${props.color}, 0.1)`,
 		// borderRightColor: `rgba(${props.color}, 1)`,
@@ -16,14 +19,15 @@ const mainContainerStyle = (props) => {
 }
 
 const Cell = (props) => {
-	const { type } = props;
+	const { type, numberOfPlayer } = props;
 	return (
-		<div style={mainContainerStyle({ type, color: PIECES[type].color })} className={'cell'}/>
+		<div style={mainContainerStyle({ type, color: PIECES[type].color, numberOfPlayer: numberOfPlayer })} className={'cell'}/>
 	)
 }
 
 Cell.propTypes = {
-	type: PropTypes.string
+	type: PropTypes.string,
+	numberOfPlayer: PropTypes.number
 };
 
 export default React.memo(Cell);
