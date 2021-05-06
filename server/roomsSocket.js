@@ -2,6 +2,22 @@ import { SOCKET_RES, SOCKET_ACTIONS } from '../client/src/constants/socketConsta
 
 export const roomSocket = (rooms, io, socket) => {
 
+	// io.of("/").adapter.on("create-room", (room) => {
+	// 	console.log(`adapter: room ${room} was created`);
+	// });
+
+	// io.of("/").adapter.on("join-room", (room, id) => {
+	// 	console.log(`adapter: socket ${id} has joined room ${room}`);
+	// });
+
+	// io.of("/").adapter.on("leave-room", (room, id) => {
+	// 	console.log(`adapter: socket ${id} has leaved room ${room}`);
+	// });
+
+	// io.of("/").adapter.on("delete-room", (room, id) => {
+	// 	console.log(`adapter: socket ${id} has deleted room ${room}`);
+	// });
+
 	socket.on(SOCKET_ACTIONS.CREATE_ROOM, (newRoom, callback) => {
 		const { owner, name, players, maxPlayer } = newRoom;
 		if (rooms.findIndex((room) => room.name == newRoom.name) == -1) {
@@ -15,7 +31,8 @@ export const roomSocket = (rooms, io, socket) => {
 				status: 200,
 				msg: SOCKET_RES.ROOM_CREATED
 			});
-			console.log('created room', rooms);
+			// console.log('created room', rooms);
+			socket.join(newRoom.name);
 			io.sockets.emit(SOCKET_ACTIONS.CREATE_ROOM, newRoom); // emits to every client
 		}
 		else {
@@ -25,8 +42,8 @@ export const roomSocket = (rooms, io, socket) => {
 			});
 		}
 	});
-
-	socket.on(SOCKET_ACTIONS.UPDATE_ROOM, (updatedRoom, callback) => {
+	
+	socket.on(SOCKET_ACTIONS.UPDATE_ROOM, (updatedRoom, isJoinRoom, callback) => {
 		const { owner, name, players, maxPlayer } = updatedRoom;
 		const index = rooms.findIndex((room) => room.name == updatedRoom.name);
 		if (index == -1) {
@@ -36,6 +53,7 @@ export const roomSocket = (rooms, io, socket) => {
 			});
 		}
 		else {
+			(isJoinRoom && players.length > 0) ? socket.join(updatedRoom.name) : socket.leave(updatedRoom.name);
 			rooms.splice(index, 1, {
 				owner,
 				name,
@@ -46,7 +64,7 @@ export const roomSocket = (rooms, io, socket) => {
 				status: 200,
 				msg: SOCKET_RES.ROOM_UPDATED
 			});
-			console.log('updated room', index, rooms);
+			// io.to(updatedRoom.name).emit('create', updatedRoom.name);
 			io.sockets.emit(SOCKET_ACTIONS.UPDATE_ROOM, updatedRoom);
 		}
 	});
@@ -65,7 +83,9 @@ export const roomSocket = (rooms, io, socket) => {
 				status: 200,
 				msg: SOCKET_RES.ROOM_DELETED
 			});
-			console.log('deleted room', index, rooms);
+			// console.log('deleted room', index, rooms);
+			socket.leave(roomName);
+			io.to(roomName).emit('delete-room');
 			io.sockets.emit(SOCKET_ACTIONS.DELETE_ROOM, roomName);
 		}
 	});

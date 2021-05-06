@@ -160,7 +160,7 @@ const Home = () => {
 	}
 
 	const doUpdateRoom = (updatedRoom, isJoinRoom) => {
-		if (socket) socket.emit(SOCKET_ACTIONS.UPDATE_ROOM, updatedRoom, (res) => {
+		if (socket) socket.emit(SOCKET_ACTIONS.UPDATE_ROOM, updatedRoom, isJoinRoom, (res) => {
 			if (res.msg === SOCKET_RES.ROOM_UPDATED) {
 				enterOrLeaveRoom(isJoinRoom ? updatedRoom : null);
 			} else {

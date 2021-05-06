@@ -3,10 +3,6 @@ import debug from 'debug';
 
 import { playersSocket } from './playersSocket';
 import { roomSocket } from './roomsSocket';
-// import express from 'express';
-import cors from 'cors';
-
-// const app = express();
 
 
 const logerror = debug('tetris:error');
@@ -41,11 +37,10 @@ const initApp = (app, params, cb) => {
 
 const initEngine = (io) => {
 	io.on('connection', (socket) => {
-		// socket.on('join', (room) => {
-		// 	console.log(`Socket ${socket.id} joining ${room}`);
-		// 	socket.join(room);
-		// });
-		console.log('connected', socket.id);
+		socket.on('emit_room', (data) => {
+			io.to(data.roomName).emit(data.emitEvent);
+		}); // not safe need verification ?
+		// socket.on('create', (room) => console.log(`CREATED ${room} \n\n`))
 
 		playersSocket(clients, socket);
 		roomSocket(rooms, io, socket);
