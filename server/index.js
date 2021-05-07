@@ -58,6 +58,33 @@ const initEngine = (io) => {
 		console.log('connected', socket.id);
 		playersSocket(clients, socket);
 		roomSocket(rooms, io, socket);
+
+		socket.on("disconnect", () => {
+			const index = clients.findIndex((client) => client.id === socket.id);
+			if (index != -1) {
+				const client = clients[index];
+				if (client.connected) {
+					const roomOwnerIndex = rooms.findIndex((room) => room.owner === client.name);
+					const roomPlayerIndex = rooms.findIndex((room) => room.players.includes(client.name) && room.owner !== client.name);
+
+					if (roomOwnerIndex !== -1) {
+						const roomOwner = rooms[roomOwnerIndex];
+						const players = roomOwner.players.filter((player) => player !== client.name);
+
+						roomOwner.players.length === 1 ?
+							rooms.splice(roomOwnerIndex, 1)
+							: rooms.splice(roomOwnerIndex, 1, { ...roomOwner, owner: players[0], players });
+					}
+					else if (roomPlayerIndex !== -1) {
+						const roomPlayer = rooms[roomPlayerIndex];
+						const players = roomPlayer.players.filter((player) => player !== client.name);
+
+						rooms.splice(roomPlayerIndex, 1, { ...roomPlayer, players });
+					}
+				}
+				clients.splice(index, 1);
+			}
+		});
 	});
 };
 

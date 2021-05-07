@@ -4,6 +4,8 @@ export const playersSocket = (clients, socket) => {
 		const { name, roomName } = playerData;
 		if (clients.findIndex((client) => client.name == playerData.name) == -1) {
 			clients.push({
+				id: socket.id,
+				connected: false,
 				name,
 				roomName,
 			});
@@ -18,7 +20,7 @@ export const playersSocket = (clients, socket) => {
 				msg: 'NAME_EXIST'
 			});
 		}
-		console.log('create player', clients);
+		// console.log('create player', clients);
 		socket.emit('createPlayer', playerData);
 	});
 
@@ -33,6 +35,7 @@ export const playersSocket = (clients, socket) => {
 		}
 		else {
 			clients.splice(index, 1, {
+				id: socket.id,
 				connected,
 				name,
 				roomName,
@@ -42,7 +45,7 @@ export const playersSocket = (clients, socket) => {
 				msg: 'UPDATED'
 			});
 		}
-		console.log('update player', index, clients);
+		// console.log('update player', index, clients);
 		socket.emit('updatePlayer', currentPlayer);
 	});
 };
