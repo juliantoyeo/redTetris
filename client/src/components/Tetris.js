@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { useParams } from 'react-router-dom';
 
@@ -12,14 +12,14 @@ import { useBoard } from '../hooks/useBoard';
 import { useGameStatus } from '../hooks/useGameStatus';
 import { KEY_CODE } from '../constants/gameConstant';
 
-
-const mainContainerStyle = (props) => {
-	return ({
+const styles = {
+	mainContainerStyle: {
 		boxSizing: 'border-box',
 		display: 'flex',
 		// flexDirection: 'column',
 		flexWrap: 'wrap',
-		justifyContent: props.numberOfPlayer > 2 ? 'flex-start' : 'space-evenly',
+		// justifyContent: props.numberOfPlayer > 2 ? 'flex-start' : 'space-evenly',
+		justifyContent: 'center',
 		alignItems: 'center',
 		width: '100vw',
 		minHeight: '100vh',
@@ -27,15 +27,31 @@ const mainContainerStyle = (props) => {
 		backgroundSize: 'cover',
 		fontFamily: 'Avenir Next',
 		fontSize: '1vw'
-	})
+	},
+	modal: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		width: '100%',
+		height: '100%',
+		position: 'fixed',
+		overflow: 'auto',
+		zIndex: 2,
+		top: 0,
+		left: 0,
+		fontSize: '10vw',
+		color: 'white',
+		backgroundColor: 'rgba(0,0,0,0.6)'
+	}
 }
 
-const Tetris = (props) => {
-	const { socket } = props;
-	const { roomName, playerName } = useParams();
-	const [state, dispatch] = useContext(combinedContext);
+const Tetris = () => {
+	// const { socket } = props;
+	const { roomName } = useParams();
+	const [state] = useContext(combinedContext);
 	const defaulDropTime = 1000;
 	const [currentRoom, setCurrentRoom] = useState(null);
+	const [countDown, setCountDown] = useState(3);
 	const [dropTime, setDropTime] = useState(null);
 	const [currentDropTime, setCurrentDropTime] = useState(defaulDropTime);
 	const [gameOver, setGameOver] = useState(true);
@@ -47,14 +63,14 @@ const Tetris = (props) => {
 	// let numberOfPlayer = 1;
 
 	// console.log('location', location)
-	console.log('state', state)
-	console.log('roomName', roomName)
-	console.log('playerName', playerName)
+	// console.log('state', state)
+	// console.log('roomName', roomName)
+	// console.log('playerName', playerName)
 	console.log('currentRoom', currentRoom)
 
 	useEffect(() => {
-		console.log(socket)
-		
+		// console.log(socket)
+
 		if (state.rooms) {
 			const room = _.find(state.rooms, (room) => room.name === roomName);
 			if (room) {
@@ -63,7 +79,7 @@ const Tetris = (props) => {
 				setCurrentRoom(room);
 			}
 		}
-		
+
 	}, [state.rooms]);
 
 	useEffect(() => {
@@ -73,6 +89,16 @@ const Tetris = (props) => {
 			}
 		}
 	}, [boardWithLandedPiece]);
+
+	useInterval(() => {
+		drop();
+	}, dropTime);
+
+	useInterval(() => {
+		if (countDown !== -1) {
+			setCountDown((prev) => prev - 1);
+		}
+	}, 1000);
 
 	const startGame = () => {
 		if (dropTime) {
@@ -164,26 +190,23 @@ const Tetris = (props) => {
 		}
 	}
 
-	useInterval(() => {
-		drop();
-	}, dropTime);
-
 	const drawGameArea = () => {
 		return _.map(currentRoom.players, (player) => {
-			return <GameArea key={player} board={board} piece={piece} gameOver={gameOver} gameStatus={gameStatus} startGame={startGame} numberOfPlayer={numberOfPlayer}/>
+			return <GameArea key={player.name} board={board} piece={piece} gameOver={gameOver} gameStatus={gameStatus} startGame={startGame} numberOfPlayer={numberOfPlayer} />
 		})
 	}
 
 	return (
-		<div style={mainContainerStyle({ numberOfPlayer: numberOfPlayer})} role={'button'} tabIndex={'0'} onKeyDown={(e) => move(e)} onKeyUp={keyUp}>
+		<div style={styles.mainContainerStyle} role={'button'} tabIndex={'0'} onKeyDown={(e) => move(e)} onKeyUp={keyUp}>
+			{countDown !== -1 && <div style={styles.modal}>{countDown === 0 ? 'Start !' : `${countDown}`}</div>}
 			{currentRoom && drawGameArea()}
 		</div>
 	)
 }
 
-Tetris.propTypes = {
-	socket: PropTypes.object
-};
+// Tetris.propTypes = {
+// 	socket: PropTypes.object
+// };
 
 
 export default Tetris;

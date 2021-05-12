@@ -1,31 +1,31 @@
+import Player from '../class/Player';
+import { SOCKET_RES, SOCKET_EVENTS } from '../../client/src/constants/socketConstants'
+
 export const playersSocket = (clients, socket) => {
 
-	socket.on('createPlayer', (playerData, callback) => {
-		const { name, roomName } = playerData;
-		if (clients.findIndex((client) => client.name == playerData.name) == -1) {
-			clients.push({
-				id: socket.id,
-				connected: false,
-				name,
-				roomName,
-			});
+	socket.on(SOCKET_EVENTS.CREATE_PLAYER, (playerName, callback) => {
+		if (clients.findIndex((client) => client.name == playerName) == -1) {
+			const player = new Player({ id: socket.id, name: playerName })
+
+			clients.push(player);
 			callback({
 				status: 200,
-				msg: 'CONNECTED'
+				msg: SOCKET_RES.PLAYER_CREATED,
+				player
 			});
 		}
 		else {
 			callback({
 				status: 404,
-				msg: 'NAME_EXIST'
+				msg: SOCKET_RES.PLAYER_NAME_EXIST
 			});
 		}
 		// console.log('create player', clients);
-		socket.emit('createPlayer', playerData);
+		// socket.emit('createPlayer', playerData);
 	});
 
 	socket.on('updatePlayer', (currentPlayer, callback) => {
-		const { connected, name, roomName } = currentPlayer;
+		const { connected, name } = currentPlayer;
 		const index = clients.findIndex((client) => client.name == currentPlayer.name);
 		if (index == -1) {
 			callback({
@@ -38,7 +38,6 @@ export const playersSocket = (clients, socket) => {
 				id: socket.id,
 				connected,
 				name,
-				roomName,
 			});
 			callback({
 				status: 200,

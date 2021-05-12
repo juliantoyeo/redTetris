@@ -8,19 +8,13 @@ import { CELL_SIZE, BOARD_SIZE } from '../constants/gameConstant';
 const mainContainerStyle = (props) => {
 	return ({
 		boxSizing: 'border-box',
-		width: props.numberOfPlayer > 3 ?'25%' : '33.33%',
+		width: props.numberOfPlayer > 3 ?'20%' : '30%',
 		maxWidth: '50vw',
 		display: 'flex',
 		justifyContent: 'space-evenly',
-		// margin: '0.5vw',
+		margin: '1vw',
 		fontSize: props.numberOfPlayer > 3 ?'0.8vw' : '1vw',
 		border: '1px solid #333'
-	});
-}
-
-const boardContainerStyle = (props) => {
-	return ({
-		width: `${props.cellSize * BOARD_SIZE.WIDTH}vw`
 	});
 }
 
@@ -81,7 +75,7 @@ const GameArea = (props) => {
 
 	return (
 		<div style={mainContainerStyle({ numberOfPlayer: numberOfPlayer })}>
-			<div style={boardContainerStyle({ cellSize: cellSize })}>
+			<div style={{ width: `${cellSize * BOARD_SIZE.WIDTH}vw` }}>
 				<Board board={board} cellSize={cellSize} numberOfPlayer={numberOfPlayer} />
 			</div>
 			<div style={styles.sideContainer}>

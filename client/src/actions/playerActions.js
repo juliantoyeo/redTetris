@@ -1,24 +1,21 @@
 import { PLAYER_ACTIONS } from '../constants/actionConstant';
+import { SOCKET_RES, SOCKET_EVENTS } from '../constants/socketConstants';
+import { errorAlert } from '../utils/errorUtils';
 
-export const createPlayer = (socket, playerData) => (dispatch) => {
-	socket.on('createPlayer', (msg) => {
-		console.log('WebSocket createPlayer event received :', msg);
-		return (msg);
-	});
-	if (socket) socket.emit('createPlayer', playerData, (res) => {
-		if (res.status === 200) {
+export const createPlayer = (socket, playerName) => (dispatch) => {
+	if (socket) socket.emit(SOCKET_EVENTS.CREATE_PLAYER, playerName, (res) => {
+		if (res.msg === SOCKET_RES.PLAYER_CREATED) {
 			dispatch({
 				type: PLAYER_ACTIONS.CREATE_PLAYER,
-				name: playerData.name,
-				roomName: playerData.roomName
+				player: res.player
 			});
 		} else {
-			alert('Name exist, please try a different name');
+			errorAlert(res.msg);
 		}
 	});
 };
 
-export const updatePlayer = (socket, currentPlayer) => (dispatch) => {
+export const updatePlayer = (socket, currentPlayer) => (dispatch) => { // Might not be used, to be removed
 	let resValue;
 	socket.on('updatePlayer', (msg) => {
 		console.log('WebSocket updatePlayer event received :', msg);
@@ -29,7 +26,6 @@ export const updatePlayer = (socket, currentPlayer) => (dispatch) => {
 		resValue = res.status === 200 ? {
 			type: PLAYER_ACTIONS.UPDATE_PLAYER,
 			name: currentPlayer.name,
-			roomName: currentPlayer.roomName,
 			connected: currentPlayer.connected
 		} : {}; // TODO : DO ALERT
 		dispatch(resValue);

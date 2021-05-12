@@ -9,8 +9,10 @@ const reducer = (state, action) => {
 			return [...state, action.newRoom];
 		case ROOM_ACTIONS.DELETE_ROOM:
 			return _.filter(state, (room) => room.name !== action.roomName);
-		case ROOM_ACTIONS.UPDATE_ROOM:
-			return _.unionBy([action.updatedRoom], state, 'name');
+		case ROOM_ACTIONS.UPDATE_ROOM: {
+			const newRooms = _.filter(state, (room) => room.name !== action.updatedRoom.name);
+			return [...newRooms, action.updatedRoom];
+		}
 		default:
 			return state;
 	}

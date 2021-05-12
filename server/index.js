@@ -1,16 +1,31 @@
 import fs from 'fs';
 import debug from 'debug';
 
-import { playersSocket } from './playersSocket';
-import { roomSocket } from './roomsSocket';
+import { helpersSocket } from './sockets/helpersSocket';
+import { playersSocket } from './sockets/playersSocket';
+import { roomsSocket } from './sockets/roomsSocket';
+import Player from './class/Player';
 
-import { SOCKET_ACTIONS } from '../client/src/constants/socketConstants'
+import { SOCKET_EVENTS } from '../client/src/constants/socketConstants'
+import Game from './class/Game';
 
 const logerror = debug('tetris:error');
 const loginfo = debug('tetris:info');
 
 const clients = new Array();
 const rooms = new Array();
+
+const player1 = new Player({ name: 'player1' })
+const player2 = new Player({ name: 'player3' })
+
+const newRoom = new Game({
+	name:'testRoom',
+	owner:'aaaa',
+	players: [player1, player2],
+	maxPlayer: 10
+})
+
+rooms.push(newRoom)
 
 
 const initApp = (app, params, cb) => {
@@ -46,45 +61,10 @@ const initApp = (app, params, cb) => {
 
 const initEngine = (io) => {
 	io.on('connection', (socket) => {
-		socket.on('emit_room', (data) => {
-			io.to(data.roomName).emit(data.emitEvent);
-		}); // not safe need verification ?
-		// socket.on('create', (room) => console.log(`CREATED ${room} \n\n`))
-
-		// socket.on('join', (room) => {
-		// 	console.log(`Socket ${socket.id} joining ${room}`);
-		// 	socket.join(room);
-		// });
 		console.log('connected', socket.id);
+		helpersSocket(clients, rooms, io, socket);
 		playersSocket(clients, socket);
-		roomSocket(rooms, io, socket);
-
-		socket.on("disconnect", () => {
-			const index = clients.findIndex((client) => client.id === socket.id);
-			if (index != -1) {
-				const client = clients[index];
-				if (client.connected) {
-					const roomOwnerIndex = rooms.findIndex((room) => room.owner === client.name);
-					const roomPlayerIndex = rooms.findIndex((room) => room.players.includes(client.name) && room.owner !== client.name);
-
-					if (roomOwnerIndex !== -1) {
-						const roomOwner = rooms[roomOwnerIndex];
-						const players = roomOwner.players.filter((player) => player !== client.name);
-
-						roomOwner.players.length === 1 ?
-							rooms.splice(roomOwnerIndex, 1)
-							: rooms.splice(roomOwnerIndex, 1, { ...roomOwner, owner: players[0], players });
-					}
-					else if (roomPlayerIndex !== -1) {
-						const roomPlayer = rooms[roomPlayerIndex];
-						const players = roomPlayer.players.filter((player) => player !== client.name);
-
-						rooms.splice(roomPlayerIndex, 1, { ...roomPlayer, players });
-					}
-				}
-				clients.splice(index, 1);
-			}
-		});
+		roomsSocket(clients, rooms, io, socket);
 	});
 };
 
