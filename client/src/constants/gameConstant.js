@@ -3,6 +3,10 @@ export const BOARD_SIZE = {
 	HEIGHT: 20
 }
 
+export const STACK_LIMIT = 2;
+
+export const PIECE_STACK_LENGTH = 2;
+
 export const MAX_PLAYER = 8;
 
 export const CELL_SIZE = 1.5;
@@ -17,7 +21,8 @@ export const COLORS = {
 	PURPLE: '238,203,255',
 	RED: '255,179,186',
 	DARK_RED: '255,150,150',
-	YELLOW: '255,255,186'
+	YELLOW: '255,255,186',
+	GREY: '150, 150, 150'
 }
 
 export const KEY_CODE = {
@@ -58,6 +63,10 @@ export const PIECES = {
 	'X': {
 		shape: [[['0']]],
 		color: COLORS.BLACK
+	},
+	'B': {
+		shape: [[['0']]],
+		color: COLORS.GREY
 	},
 	I: {
 		shape: [

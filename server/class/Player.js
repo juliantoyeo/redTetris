@@ -6,12 +6,13 @@ class Player {
 		this.name = props.name;
 		this.connected = false;
 		this.board = null;
-		this.gameOver = true;
+		this.gameOver = false;
 		this.gameStatus = {
 			score: 0,
 			rows: 0,
 			level: 0
 		};
+		this.stackIndex = 0;
 	}
 
 	createBoard = () => {
@@ -25,9 +26,10 @@ class Player {
 	update = (data) => {
 		if (!data) return;
 		this.board = data.board ? data.board : this.board;
-		this.gameOver = data.gameOver;
+		this.gameOver = typeof data.gameOver !== 'undefined' ? data.gameOver : this.gameOver;
 		this.gameStatus = data.gameStatus ? data.gameStatus : this.gameStatus;
-		this.connected = data.connected;
+		this.stackIndex = data.stackIndex ? data.stackIndex : this.stackIndex;
+		this.connected = typeof data.connected !== 'undefined' ? data.connected : this.connected;
 	}
 }
 

@@ -23,17 +23,17 @@ export const initiateSocket = (dispatch) => {
 	});
 
 	newSocket.on(SOCKET_EVENTS.CREATE_ROOM, (newRoom) => {
-		console.log('WebSocket createRoom event received :', newRoom);
+		// console.log('WebSocket createRoom event received :', newRoom);
 		dispatch(addRoom(newRoom));
 	});
 
 	newSocket.on(SOCKET_EVENTS.UPDATE_ROOM, (updatedRoom) => {
-		console.log('WebSocket updateRoom event received :', updatedRoom);
+		// console.log('WebSocket updateRoom event received :', updatedRoom);
 		dispatch(updateRoom(updatedRoom));
 	});
 
 	newSocket.on(SOCKET_EVENTS.DELETE_ROOM, (roomName) => {
-		console.log('WebSocket deleteRoom event received :', roomName);
+		// console.log('WebSocket deleteRoom event received :', roomName);
 		dispatch(deleteRoom(roomName));
 	});
 

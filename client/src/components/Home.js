@@ -1,11 +1,12 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { useHistory } from 'react-router-dom';
 
 import { createPlayer } from '../actions/playerActions';
-import { SOCKET_RES, SOCKET_EVENTS } from '../constants/socketConstants';
+import { SOCKET_EVENTS } from '../constants/socketConstants';
 import { errorAlert } from '../utils/errorUtils';
+import { doRoomSocketEvent } from '../utils/socketUtils';
 
 import combinedContext from '../contexts/combinedContext';
 
@@ -53,10 +54,20 @@ const Home = (props) => {
 	const history = useHistory();
 	const [state, dispatch] = useContext(combinedContext);
 	const { currentPlayer, rooms } = state;
-	const [form, setForm] = useState({ playerName: '', roomName: '', maxPlayer: 2 });
+	const [form, setForm] = useState({ playerName: '', roomName: '', maxPlayer: 10 });
 	const [selectedRoom, setSelectedRoom] = useState(null);
 
 	console.log('state', state);
+
+	useEffect(() => {
+		if (socket) {
+			socket.off(SOCKET_EVENTS.START_GAME);
+			socket.on(SOCKET_EVENTS.START_GAME, (updatedRoom) => {
+				console.log('WebSocket start game event received :', updatedRoom);
+				history.push(`/${updatedRoom.name}[${currentPlayer.name}]`);
+			});
+		}
+	}, [socket, currentPlayer]);
 
 	const onFormChange = (event, type) => {
 		const value = event.target.value;
@@ -83,21 +94,7 @@ const Home = (props) => {
 			playerName: currentPlayer.name,
 			isJoinRoom: true
 		}
-		doRoomSocketEvent(SOCKET_EVENTS.CREATE_ROOM, data);
-	}
-
-	const doRoomSocketEvent = (event, data) => {
-		if (socket) socket.emit(event, data, (res) => {
-			if (res.status === 200) {
-				if (res.msg === SOCKET_RES.ROOM_DELETED || !data.isJoinRoom) {
-					setSelectedRoom(null);
-				} else {
-					setSelectedRoom(res.room);
-				}
-			} else {
-				errorAlert(res.msg);
-			}
-		});
+		doRoomSocketEvent(socket, setSelectedRoom, SOCKET_EVENTS.CREATE_ROOM, data);
 	}
 
 	const onJoinOrLeaveRoom = (room, isJoinRoom) => {
@@ -107,14 +104,19 @@ const Home = (props) => {
 			isJoinRoom
 		}
 		if (isJoinRoom || room.players.length > 1) {
-			doRoomSocketEvent(SOCKET_EVENTS.UPDATE_ROOM, data);
+			doRoomSocketEvent(socket, setSelectedRoom, SOCKET_EVENTS.UPDATE_ROOM, data);
 		} else {
-			doRoomSocketEvent(SOCKET_EVENTS.DELETE_ROOM, data);
+			doRoomSocketEvent(socket, setSelectedRoom, SOCKET_EVENTS.DELETE_ROOM, data);
 		}
 	}
 
 	const onStartGame = (room) => {
-		history.push(`/${room.name}[${currentPlayer.name}]`);
+		if (socket)
+			socket.emit(SOCKET_EVENTS.START_GAME, room.name, (res) => {
+				if (res.status !== 200) {
+					errorAlert(res.msg);
+				}
+			});
 	}
 
 	const getRooms = () => {

@@ -1,10 +1,14 @@
+import Piece from '../class/Piece';
+
 class Game {
 	constructor(props) {
 		this.name = props.name;
 		this.owner = props.owner;
 		this.players = props.players;
+		this.isSolo = false;
 		this.maxPlayer = props.maxPlayer;
 		this.isStarted = false;
+		this.pieces = new Piece();
 	}
 
 	addPlayer = (player) => {
@@ -22,7 +26,8 @@ class Game {
 		this.name = data.name || this.name;
 		this.owner = data.owner || this.owner;
 		this.players = data.players || this.players;
-		this.isStarted = data.isStarted || this.isStarted;
+		this.isSolo = typeof data.isSolo !== 'undefined' ? data.isSolo : this.isSolo;
+		this.isStarted = typeof data.isStarted !== 'undefined' ? data.isStarted : this.isStarted;
 	}
 }
 

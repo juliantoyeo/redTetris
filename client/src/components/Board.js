@@ -20,7 +20,6 @@ const mainContainerStyle = (props) => {
 
 const Board = (props) => {
 	const { board, cellSize, numberOfPlayer, mini } = props;
-
 	const getHeight = () => {
 		if (!mini)
 			return (board.length);

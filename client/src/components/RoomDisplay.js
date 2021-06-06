@@ -48,7 +48,7 @@ const RoomDisplay = (props) => {
 					<Button style={{ width: '40%' }} type={'button'} onClick={() => onLeave(room)} text={'Leave'} />
 					{isOwner && <Button style={{ width: '40%', backgroundColor: `rgba(${COLORS.DARK_GREEN}, 1)` }} type={'button'} onClick={() => onClick(room)} text={'Start'} />}
 				</div> :
-				<Button style={{ width: '15%' }} type={'button'} onClick={() => onClick(room)} isDisable={isFull} text={isFull ? 'Full' : 'Join'} />
+				<Button style={{ width: '15%' }} type={'button'} onClick={() => onClick(room)} isDisable={isFull || room.isStarted} text={room.isStarted ? 'Game Started' : isFull ? 'Full' : 'Join'} />
 			}
 		</div>
 	)

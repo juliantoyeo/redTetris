@@ -14,20 +14,3 @@ export const createPlayer = (socket, playerName) => (dispatch) => {
 		}
 	});
 };
-
-export const updatePlayer = (socket, currentPlayer) => (dispatch) => { // Might not be used, to be removed
-	let resValue;
-	socket.on('updatePlayer', (msg) => {
-		console.log('WebSocket updatePlayer event received :', msg);
-		return (msg);
-	});
-	
-	if (socket) socket.emit('updatePlayer', currentPlayer, (res) => {
-		resValue = res.status === 200 ? {
-			type: PLAYER_ACTIONS.UPDATE_PLAYER,
-			name: currentPlayer.name,
-			connected: currentPlayer.connected
-		} : {}; // TODO : DO ALERT
-		dispatch(resValue);
-	});
-};

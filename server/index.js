@@ -7,6 +7,8 @@ import { roomsSocket } from './sockets/roomsSocket';
 import Player from './class/Player';
 
 import { SOCKET_EVENTS } from '../client/src/constants/socketConstants'
+import { TEST_BOARD } from '../client/src/constants/gameConstant'
+
 import Game from './class/Game';
 
 const logerror = debug('tetris:error');
@@ -17,6 +19,8 @@ const rooms = new Array();
 
 const player1 = new Player({ name: 'player1' })
 const player2 = new Player({ name: 'player3' })
+player1.update({ board: TEST_BOARD.L_SPIN, gameStatus: { score: 100, rows: 0, level: 0} })
+player2.update({ board: TEST_BOARD.T_SPIN, gameStatus: { score: 200, rows: 0, level: 0} })
 
 const newRoom = new Game({
 	name:'testRoom',
@@ -25,7 +29,7 @@ const newRoom = new Game({
 	maxPlayer: 10
 })
 
-rooms.push(newRoom)
+// rooms.push(newRoom)
 
 
 const initApp = (app, params, cb) => {
@@ -63,7 +67,7 @@ const initEngine = (io) => {
 	io.on('connection', (socket) => {
 		console.log('connected', socket.id);
 		helpersSocket(clients, rooms, io, socket);
-		playersSocket(clients, socket);
+		playersSocket(clients, rooms, io, socket);
 		roomsSocket(clients, rooms, io, socket);
 	});
 };

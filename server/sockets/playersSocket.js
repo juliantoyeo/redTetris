@@ -1,7 +1,7 @@
 import Player from '../class/Player';
 import { SOCKET_RES, SOCKET_EVENTS } from '../../client/src/constants/socketConstants'
 
-export const playersSocket = (clients, socket) => {
+export const playersSocket = (clients, rooms, io, socket) => {
 
 	socket.on(SOCKET_EVENTS.CREATE_PLAYER, (playerName, callback) => {
 		if (clients.findIndex((client) => client.name == playerName) == -1) {
@@ -20,31 +20,41 @@ export const playersSocket = (clients, socket) => {
 				msg: SOCKET_RES.PLAYER_NAME_EXIST
 			});
 		}
-		// console.log('create player', clients);
-		// socket.emit('createPlayer', playerData);
 	});
 
-	socket.on('updatePlayer', (currentPlayer, callback) => {
-		const { connected, name } = currentPlayer;
-		const index = clients.findIndex((client) => client.name == currentPlayer.name);
+	socket.on(SOCKET_EVENTS.SET_PLAYER_GAME_OVER, (roomName, callback) => {
+		const index = rooms.findIndex((room) => room.name == roomName);
 		if (index == -1) {
 			callback({
 				status: 404,
-				msg: 'NAME_DOESNT_EXIST'
+				msg: SOCKET_RES.ROOM_DOESNT_EXIST
+			});
+		}
+		else if (rooms[index].players.findIndex((player) => player.id === socket.id) == -1 ) {
+			callback({
+				status: 405,
+				msg: 'ERROR'
 			});
 		}
 		else {
-			clients.splice(index, 1, {
-				id: socket.id,
-				connected,
-				name,
-			});
+			const selectedRoom = rooms[index];
+			const selectedPlayer = selectedRoom.players.find((player) => player.id === socket.id);
+			
+			selectedPlayer.update({ gameOver: true });
+			const gameOver = selectedRoom.players.filter(player => player.gameOver === false);
+			
+			io.to(roomName).emit(SOCKET_EVENTS.UPDATE_ROOM, selectedRoom);
+
+			if (gameOver.length ===  1) {
+				console.log('the game is Over!!', gameOver[0]);
+				io.to(roomName).emit(SOCKET_EVENTS.GAME_IS_OVER, gameOver[0]);
+			}
+
 			callback({
 				status: 200,
-				msg: 'UPDATED'
+				msg: 'SUCCESS'
 			});
 		}
-		// console.log('update player', index, clients);
-		socket.emit('updatePlayer', currentPlayer);
 	});
+
 };

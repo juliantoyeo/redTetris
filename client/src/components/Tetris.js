@@ -1,24 +1,27 @@
 import React, { useState, useEffect, useContext } from 'react';
-// import PropTypes from 'prop-types';
+import { useHistory } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
+import { Modal, Typography, Grid } from '@material-ui/core';
 import { useParams } from 'react-router-dom';
 
 import GameArea from './GameArea';
+import { doRoomSocketEvent } from '../utils/socketUtils';
+import Button from './subComponents/Button';
 import combinedContext from '../contexts/combinedContext';
-import { createBoard, checkCollision } from '../utils/boardUtils';
+import { checkCollision } from '../utils/boardUtils';
 import { useInterval } from '../hooks/useInterval';
 import { usePiece } from '../hooks/usePiece';
 import { useBoard } from '../hooks/useBoard';
 import { useGameStatus } from '../hooks/useGameStatus';
-import { KEY_CODE } from '../constants/gameConstant';
+import { KEY_CODE, PIECES } from '../constants/gameConstant';
+import { SOCKET_EVENTS } from '../constants/socketConstants';
 
 const styles = {
 	mainContainerStyle: {
 		boxSizing: 'border-box',
 		display: 'flex',
-		// flexDirection: 'column',
 		flexWrap: 'wrap',
-		// justifyContent: props.numberOfPlayer > 2 ? 'flex-start' : 'space-evenly',
 		justifyContent: 'center',
 		alignItems: 'center',
 		width: '100vw',
@@ -28,7 +31,7 @@ const styles = {
 		fontFamily: 'Avenir Next',
 		fontSize: '1vw'
 	},
-	modal: {
+	countDownModal: {
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'center',
@@ -42,45 +45,108 @@ const styles = {
 		fontSize: '10vw',
 		color: 'white',
 		backgroundColor: 'rgba(0,0,0,0.6)'
+	},
+	modal: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
+	modalPopUp: {
+		textAlign: 'center',
+		backgroundColor: 'rgba(200,200,200,0.8)',
+		width: '80%',
+		height: '30%',
+		padding: '30px'
+	},
+	gridItem: {
+		display: 'flex',
+		alignContent: 'center',
+		alignItems: 'center',
+		justifyContent: 'space-around',
+		color: 'rgb(80,80,80)'
+	},
+	button: {
+		color: 'rgb(80,80,80)',
+		width: '40%',
+		height: '35%'
 	}
 }
 
-const Tetris = () => {
-	// const { socket } = props;
+const Tetris = (props) => {
+	const { socket } = props;
 	const { roomName } = useParams();
+	const history = useHistory();
 	const [state] = useContext(combinedContext);
 	const defaulDropTime = 1000;
+	const [currPlayer, setCurrPlayer] = useState(null);
 	const [currentRoom, setCurrentRoom] = useState(null);
-	const [countDown, setCountDown] = useState(3);
+	const [countDown, setCountDown] = useState(0);
 	const [dropTime, setDropTime] = useState(null);
 	const [currentDropTime, setCurrentDropTime] = useState(defaulDropTime);
 	const [gameOver, setGameOver] = useState(true);
-	const [piece, ghostPiece, updatePiece, getPiece, pieceRotate] = usePiece();
-	const [board, setBoard, boardWithLandedPiece, setBoardWithLandedPiece, rowsCleared] = useBoard(piece, ghostPiece, getPiece, gameOver);
+	const [piece, ghostPiece, updatePiece, getPiece, pieceRotate] = usePiece(socket, currentRoom, currPlayer, setCurrPlayer);
+	const [, setBoard, boardWithLandedPiece, setBoardWithLandedPiece, rowsCleared, putBlockingRow] = useBoard(socket, roomName, piece, ghostPiece, getPiece, gameOver);
 	const [gameStatus, setGameStatus] = useGameStatus(rowsCleared);
+	const [gameEnded, setGameEnded] = useState(false);
 	const [numberOfPlayer, setNumberOfPlayer] = useState(1);
+	const [openModal, setOpenModal] = useState(false);
+	const [winner, setWinner] = useState({ name: '' });
 
-	// let numberOfPlayer = 1;
+	// TODO
+	// intercept browser back button -> prevent default, do Leave room instead;
 
-	// console.log('location', location)
-	// console.log('state', state)
-	// console.log('roomName', roomName)
-	// console.log('playerName', playerName)
-	console.log('currentRoom', currentRoom)
 
 	useEffect(() => {
-		// console.log(socket)
+		if (socket) {
+			socket.on(SOCKET_EVENTS.GAME_IS_OVER, (winnerPlayer) => {
+				setGameEnded(true);
+				setDropTime(null);
+				setWinner(winnerPlayer)
+				setOpenModal(true);
+			});
+		}
+	}, []);
 
+	useEffect(() => {
+		if (socket) {
+			socket.off(SOCKET_EVENTS.ADD_BLOCKING_ROW);
+			socket.on(SOCKET_EVENTS.ADD_BLOCKING_ROW, (dataReceived) => {
+				if (dataReceived.id !== socket.id) {
+					console.log(SOCKET_EVENTS.ADD_BLOCKING_ROW, dataReceived);
+					const newBoardWithLandedPiece = putBlockingRow(dataReceived.clearedRow);
+					if (!checkCollision(piece, newBoardWithLandedPiece, { x: 0, y: 0 })) {
+						updatePiece(newBoardWithLandedPiece, { x: 0, y: 0 }, false);
+					}
+					else if (!checkCollision(piece, newBoardWithLandedPiece, { x: 0, y: -1 })) {
+						updatePiece(newBoardWithLandedPiece, { x: 0, y: -1 }, false);
+					}
+					else {
+						stopGame();
+					}
+				}
+			});
+		}
+	}, [piece, boardWithLandedPiece]);
+
+	useEffect(() => {
 		if (state.rooms) {
 			const room = _.find(state.rooms, (room) => room.name === roomName);
 			if (room) {
-				// numberOfPlayer = room.players.length;
 				setNumberOfPlayer(room.players.length);
 				setCurrentRoom(room);
 			}
 		}
 
 	}, [state.rooms]);
+
+	useEffect(() => {
+		if (currentRoom) {
+			const player = _.find(currentRoom.players, (player) => player.name === state.currentPlayer.name);
+			if (player) {
+				setCurrPlayer(player);
+			}
+		}
+	}, [currentRoom]);
 
 	useEffect(() => {
 		if (checkCollision(piece, boardWithLandedPiece, { x: 0, y: 0 })) {
@@ -98,29 +164,62 @@ const Tetris = () => {
 		if (countDown !== -1) {
 			setCountDown((prev) => prev - 1);
 		}
-	}, 1000);
+		if (countDown === 0) {
+			if (currentRoom && currentRoom.pieces.stack.length && currPlayer && currPlayer.board)
+				startGame();
+		}
+	}, gameOver ? 1000 : null);
 
 	const startGame = () => {
-		if (dropTime) {
-			stopGame();
+		setBoard(currPlayer.board);
+		setBoardWithLandedPiece(currPlayer.board);
+		setDropTime(currentDropTime);
+		getPiece(currPlayer.board);
+		setGameOver(false);
+	}
+
+	// const startGame = () => {
+	// 	if (dropTime) {
+	// 		stopGame();
+	// 	} else {
+	// 		// Reset Everything
+	// 		const newBoard = createBoard();
+	// 		setBoard(newBoard);
+	// 		setBoardWithLandedPiece(newBoard);
+	// 		setDropTime(currentDropTime);
+	// 		getPiece(newBoard);
+	// 		setGameOver(false);
+	// 		setGameStatus({
+	// 			score: 0,
+	// 			rows: 0,
+	// 			level: 0
+	// 		});
+	// 	}
+	// }
+
+
+	const onReturnToLobby = () => {
+		history.push('/');
+		const data = {
+			roomName,
+			playerName: currPlayer.name,
+			isJoinRoom: false
+		}
+		if (currentRoom.players.length > 1) {
+			doRoomSocketEvent(socket, () => {}, SOCKET_EVENTS.UPDATE_ROOM, data);
 		} else {
-			// Reset Everything
-			const newBoard = createBoard();
-			setBoard(newBoard);
-			setBoardWithLandedPiece(newBoard);
-			setDropTime(currentDropTime);
-			getPiece(newBoard);
-			setGameOver(false);
-			setGameStatus({
-				score: 0,
-				rows: 0,
-				level: 0
-			});
+			doRoomSocketEvent(socket, () => {}, SOCKET_EVENTS.DELETE_ROOM, data);
 		}
 	}
 
 	const stopGame = () => {
 		setGameOver(true);
+		if (socket)
+			socket.emit(SOCKET_EVENTS.SET_PLAYER_GAME_OVER, roomName, (res) => {
+				if (res.status !== 200) {
+					console.log(res.msg);
+				}
+			});
 		setDropTime(null);
 		setCurrentDropTime(defaulDropTime);
 	}
@@ -140,15 +239,15 @@ const Tetris = () => {
 	}
 
 	const drop = () => {
-		if (gameStatus.rows > (gameStatus.level + 1) * 10) {
-			setGameStatus(prev => ({
-				...prev,
-				level: prev.level + 1
-			}));
-			const newDropTime = defaulDropTime / (gameStatus.level + 1) + 200;
-			setCurrentDropTime(newDropTime);
-			setDropTime(newDropTime);
-		}
+		// if (gameStatus.rows > (gameStatus.level + 1) * 10) {
+		// 	setGameStatus(prev => ({
+		// 		...prev,
+		// 		level: prev.level + 1
+		// 	}));
+		// 	const newDropTime = defaulDropTime / (gameStatus.level + 1) + 200;
+		// 	setCurrentDropTime(newDropTime);
+		// 	setDropTime(newDropTime);
+		// }
 		if (!checkCollision(piece, boardWithLandedPiece, { x: 0, y: 1 }))
 			updatePiece(boardWithLandedPiece, { x: 0, y: 1 }, false);
 		else {
@@ -169,6 +268,10 @@ const Tetris = () => {
 		drop();
 	}
 
+	const testBlocking = (clearedRow) => {
+		if (socket) socket.emit('emit_room', { roomName, emitEvent: 'SOCKET_EVENTS.ADD_BLOCKING_ROW', dataToSent: { id: socket.id, clearedRow } });
+	}
+
 	const move = (event) => {
 		const { keyCode } = event
 		if (!gameOver) {
@@ -187,26 +290,40 @@ const Tetris = () => {
 				pieceRotate(boardWithLandedPiece, 1);
 			else if (keyCode === KEY_CODE.SPACE)
 				hardDrop(boardWithLandedPiece);
+			else if (keyCode === 66)
+				testBlocking(18);
 		}
 	}
 
 	const drawGameArea = () => {
 		return _.map(currentRoom.players, (player) => {
-			return <GameArea key={player.name} board={board} piece={piece} gameOver={gameOver} gameStatus={gameStatus} startGame={startGame} numberOfPlayer={numberOfPlayer} />
+			return <GameArea key={player.name} player={player} nextPiece={currentRoom.pieces.stack[player.stackIndex] ? currentRoom.pieces.stack[player.stackIndex][0] : PIECES[0].shape[0]} startGame={() => { }} numberOfPlayer={numberOfPlayer} />
 		})
 	}
 
 	return (
 		<div style={styles.mainContainerStyle} role={'button'} tabIndex={'0'} onKeyDown={(e) => move(e)} onKeyUp={keyUp}>
-			{countDown !== -1 && <div style={styles.modal}>{countDown === 0 ? 'Start !' : `${countDown}`}</div>}
+			<Modal
+				open={openModal}
+				onClose={() => { }}
+				style={styles.modal}
+			>
+				<Grid container style={styles.modalPopUp}>
+					<Grid item xs={12} style={styles.gridItem}><Typography variant={'h4'}>The Winner Is : {winner.name}</Typography></Grid>
+					<Grid item xs={12} style={styles.gridItem}>
+						<Button onClick={onReturnToLobby} type={'button'} style={styles.button} text={'Back to Lobby'} />
+					</Grid>
+				</Grid>
+			</Modal>
+			{countDown !== -1 && <div style={styles.countDownModal}>{countDown === 0 ? 'Start !' : `${countDown}`}</div>}
 			{currentRoom && drawGameArea()}
 		</div>
 	)
 }
 
-// Tetris.propTypes = {
-// 	socket: PropTypes.object
-// };
+Tetris.propTypes = {
+	socket: PropTypes.object
+};
 
 
 export default Tetris;

@@ -13,14 +13,24 @@ export const createBoard = () => {
 export const checkCollision = (piece, boardWithLandedPiece, { x: moveX, y: moveY }) => {
 	const newBoard = _.cloneDeep(boardWithLandedPiece);
 	// console.log("boardWithLandedPiece", boardWithLandedPiece)
-	// console.log(piece)
+	// console.log("checkCollision", piece);
 	for (let y = 0; y < piece.shape.length; y += 1) {
 		for (let x = 0; x < piece.shape[y].length; x += 1) {
 			const moveToY = y + piece.pos.y + moveY;
 			const moveToX = x + piece.pos.x + moveX;
 			if (piece.shape[y][x] !== '0') {
 				// if (!newBoard[moveToY] || !newBoard[moveToY][moveToX] || newBoard[moveToY][moveToX][1] !== 'clear') {
+				// if (shouldConsole) {
+				// 	console.log("y", y, piece.shape.length);
+				// 	if (newBoard[moveToY]) {
+				// 		console.log("newBoard[moveToY]", newBoard[moveToY]);
+				// 		if (newBoard[moveToY][moveToX]) console.log("newBoard[moveToY][moveToX]", newBoard[moveToY][moveToX]);
+				// 	}
+				// }
+
 				if (!newBoard[moveToY] || !newBoard[moveToY][moveToX] || newBoard[moveToY][moveToX] !== '0') {
+					// console.log("boardWithLandedPiece", boardWithLandedPiece)
+					// console.log("newBoard", newBoard)
 					// console.log(piece.shape)
 					// console.log("collision happen on x : ", x, " y : ", y, " moveToX : ", moveToX, " moveToY : ", moveToY)
 					// colPos = { x: x, y: y}
@@ -30,11 +40,12 @@ export const checkCollision = (piece, boardWithLandedPiece, { x: moveX, y: moveY
 			}
 		}
 	}
+	return false;
 }
 
 export const getLandPosition = (piece, boardWithLandedPiece) => {
 	// console.log("boardWithLandedPiece", boardWithLandedPiece)
-	// console.log(piece)
+	console.log(piece)
 	// let moveY = BOARD_SIZE.HEIGHT - 1
 	let moveY = piece.pos.y;
 	if (piece.pos.y <= 0)
@@ -46,11 +57,13 @@ export const getLandPosition = (piece, boardWithLandedPiece) => {
 		// if (moveY === BOARD_SIZE.HEIGHT - 1)
 		// 	return { x: piece.pos.x, y: moveY - 1}
 		moveY++;
+		// if (moveY > BOARD_SIZE.HEIGHT + 2)
+		// 	break;
 		// console.log("checked moveY : ", moveY, " y : ", moveY - piece.pos.y)
 	}
 	moveY -= 1;
 	if (moveY < 0 && piece.type !== 'I') moveY = 0
 	// const landPos = { x: piece.pos.x, y: moveY}
-	// console.log("landPos : ", landPos)
+	// console.log("landPos : ", { x: piece.pos.x, y: moveY});
 	return { x: piece.pos.x, y: moveY};
 }

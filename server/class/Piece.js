@@ -2,7 +2,8 @@ import { PIECES } from '../../client/src/constants/gameConstant';
 
 class Piece {
 	constructor(props) {
-		this.pieces = []
+		this.stack = [];
+		this.version = 0;
 	}
 
 	randomPiece = () => {
@@ -11,9 +12,17 @@ class Piece {
 		return [PIECES[randType].shape[0], randType];
 	}
 
+	generatePieces = (amount) => {
+		for (let i = 0; i < amount; i++) {
+			this.stack.push(this.randomPiece());
+		}
+		this.version++;
+	}
+
 	update = (data) => {
 		if (!data) return;
-		this.pieces = data.pieces || this.pieces;
+		this.stack = data.stack || this.stack;
+		this.version = data.version || this.version;
 	}
 }
 

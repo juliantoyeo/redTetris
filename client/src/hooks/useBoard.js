@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import _ from 'lodash';
+
 import { createBoard } from '../utils/boardUtils';
 import { BOARD_SIZE } from '../constants/gameConstant';
+import { SOCKET_EVENTS } from '../constants/socketConstants';
 
-export const useBoard = (currentPiece, ghostPiece, getPiece, gameOver) => {
-	const [board, setBoard] = useState(createBoard());
+export const useBoard = (socket, roomName, currentPiece, ghostPiece, getPiece, gameOver) => {
+	const [board, setBoard] = useState(null);
 	const [boardWithLandedPiece, setBoardWithLandedPiece] = useState(createBoard());
 	const [rowsCleared, setRowsCleared] = useState(0);
 
@@ -17,30 +19,44 @@ export const useBoard = (currentPiece, ghostPiece, getPiece, gameOver) => {
 		let i = 0;
 		while (row[i])
 		{
-			if (row[i] === '0')
+			if (row[i] === '0' || row[i] === 'B')
 				return true;
 			i++	
 		}
 	}
 
+	const putBlockingRow = (clearedRow) => {
+		let newBoardWithLandedPiece = _.cloneDeep(boardWithLandedPiece);
+		for (let i = 0; i < clearedRow; i += 1) {
+			newBoardWithLandedPiece.push(new Array(BOARD_SIZE.WIDTH).fill('B'));
+			newBoardWithLandedPiece.shift();
+		}
+		setBoardWithLandedPiece(newBoardWithLandedPiece);
+		return newBoardWithLandedPiece;
+	}
+
 	const checkRows = (board) => {
 		let newBoard = new Array();
+		let clearedRow = 0;
+
 		for (let y = 0; y < BOARD_SIZE.HEIGHT; y += 1) {
 			const row = board[y];
+
 			if (!findEmptyCell(row)) {
 				setRowsCleared(prev => prev + 1);
+				clearedRow++;
 				newBoard.unshift(new Array(BOARD_SIZE.WIDTH).fill('0'));
 			}
 			else
 				newBoard.push(row);
 		}
-		return newBoard;
+		return { boardWithClearedRow: newBoard, clearedRow };
 	}
 
 	const updateBoard = () => {
 		let newBoard = _.cloneDeep(boardWithLandedPiece);
-		// console.log("currentPiece", currentPiece)
-		// console.log("ghostPiece", ghostPiece)
+		let lineCleared = 0;
+
 		if (ghostPiece)
 		{
 			for (let y = 0; y < ghostPiece.shape.length; y += 1) {
@@ -61,15 +77,31 @@ export const useBoard = (currentPiece, ghostPiece, getPiece, gameOver) => {
 		}
 
 		if (currentPiece.landed && !gameOver) {
-			newBoard = checkRows(newBoard);
+			const { boardWithClearedRow, clearedRow } = checkRows(newBoard);
+
+			newBoard = boardWithClearedRow;
+			lineCleared = clearedRow;
+			if (clearedRow > 0) {
+				if (socket) socket.emit('emit_room', { roomName, emitEvent: SOCKET_EVENTS.ADD_BLOCKING_ROW , dataToSent: { id: socket.id, clearedRow } });
+			}
+
 			getPiece(newBoard);
 			setBoardWithLandedPiece(newBoard);
 		}
-		
-		// console.log("newBoard", newBoard)
-		// console.log("boardWithLandedPiece", boardWithLandedPiece)
+
+		const updateBoardData = {
+			newBoard,
+			roomName,
+			lineCleared
+		}
+
+		if (socket) socket.emit(SOCKET_EVENTS.UPDATE_BOARD, updateBoardData, (res) => {
+			if (res.status !== 200) {
+				console.log(res.msg);
+			}
+		});
 		return newBoard;
 	}
 
-	return [board, setBoard, boardWithLandedPiece, setBoardWithLandedPiece, rowsCleared];
+	return [board, setBoard, boardWithLandedPiece, setBoardWithLandedPiece, rowsCleared, putBlockingRow];
 }

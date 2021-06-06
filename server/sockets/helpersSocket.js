@@ -2,8 +2,9 @@ import { SOCKET_EVENTS } from '../../client/src/constants/socketConstants'
 
 export const helpersSocket = (clients, rooms, io, socket) => {
 
-	socket.on('emit_room', (data) => {
-		io.to(data.roomName).emit(data.emitEvent);
+	socket.on('emit_room', ({ roomName, emitEvent, dataToSent = {}}) => {
+		console.log('emit_room called', emitEvent);
+		io.to(roomName).emit(emitEvent, dataToSent);
 	}); // not safe need verification ?
 
 	socket.on("disconnect", () => {
