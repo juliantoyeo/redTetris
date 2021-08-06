@@ -66,7 +66,7 @@ const styles = {
 }
 
 const GameArea = (props) => {
-	const { player, nextPiece, startGame, numberOfPlayer } = props;
+	const { player, nextPiece, quitGame, numberOfPlayer } = props;
 	const [parentHeight, setParentHeight] = useState(null);
 	let cellSize = CELL_SIZE;
 
@@ -101,7 +101,7 @@ const GameArea = (props) => {
 					<span>Level : {player.gameStatus.level}</span>
 					{player.gameOver && <span>GAME OVER!!</span>}
 				</div>
-				<Button onClick={startGame} type={'button'} text={player.gameOver ? 'Start Game' : 'Quit Game'} />
+				<Button onClick={quitGame} type={'button'} text={'Quit Game'} />
 			</div>
 		</div>
 	)
@@ -113,7 +113,7 @@ GameArea.propTypes = {
 	nextPiece: PropTypes.array,
 	gameOver: PropTypes.bool,
 	gameStatus: PropTypes.object,
-	startGame: PropTypes.func,
+	quitGame: PropTypes.func,
 	numberOfPlayer: PropTypes.number
 };
 

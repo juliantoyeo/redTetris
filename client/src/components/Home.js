@@ -57,8 +57,6 @@ const Home = (props) => {
 	const [form, setForm] = useState({ playerName: '', roomName: '', maxPlayer: 10 });
 	const [selectedRoom, setSelectedRoom] = useState(null);
 
-	console.log('state', state);
-
 	useEffect(() => {
 		if (socket) {
 			socket.off(SOCKET_EVENTS.START_GAME);

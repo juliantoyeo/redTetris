@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { createMemoryHistory } from 'history'
 // import '@babel/polyfill/noConflict' // for aysnc function
 import {
 	HashRouter as Router,
@@ -15,6 +16,7 @@ import { initiateSocket, disconnectSocket } from '../actions/server';
 const App = () => {
 	const [state, dispatch] = useCombinedReducers();
 	const [socket, setSocket] = useState(null);
+	const history = createMemoryHistory();
 
 	useEffect(() => {
 		if (!socket) {
@@ -28,7 +30,7 @@ const App = () => {
 
 	return (
 		<CombinedContext.Provider value={[state, dispatch]}>
-			<Router>
+			<Router history={history}>
 				<Switch>
 					<Route exact path={'/:roomName[:playerName]'}>
 						<Tetris socket={socket}/>

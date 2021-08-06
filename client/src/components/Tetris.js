@@ -92,9 +92,7 @@ const Tetris = (props) => {
 	const [openModal, setOpenModal] = useState(false);
 	const [winner, setWinner] = useState({ name: '' });
 
-	// TODO
-	// intercept browser back button -> prevent default, do Leave room instead;
-
+	// console.log('boardWithLandedPiece', boardWithLandedPiece);
 
 	useEffect(() => {
 		if (socket) {
@@ -106,6 +104,14 @@ const Tetris = (props) => {
 			});
 		}
 	}, []);
+
+	useEffect(() => {
+		return history.listen(location => {
+			if (history.action === 'POP') {
+				onReturnToLobby();
+			}
+		})
+	}, [currPlayer])
 
 	useEffect(() => {
 		if (socket) {
@@ -206,9 +212,9 @@ const Tetris = (props) => {
 			isJoinRoom: false
 		}
 		if (currentRoom.players.length > 1) {
-			doRoomSocketEvent(socket, () => {}, SOCKET_EVENTS.UPDATE_ROOM, data);
+			doRoomSocketEvent(socket, () => { }, SOCKET_EVENTS.UPDATE_ROOM, data);
 		} else {
-			doRoomSocketEvent(socket, () => {}, SOCKET_EVENTS.DELETE_ROOM, data);
+			doRoomSocketEvent(socket, () => { }, SOCKET_EVENTS.DELETE_ROOM, data);
 		}
 	}
 
@@ -297,7 +303,13 @@ const Tetris = (props) => {
 
 	const drawGameArea = () => {
 		return _.map(currentRoom.players, (player) => {
-			return <GameArea key={player.name} player={player} nextPiece={currentRoom.pieces.stack[player.stackIndex] ? currentRoom.pieces.stack[player.stackIndex][0] : PIECES[0].shape[0]} startGame={() => { }} numberOfPlayer={numberOfPlayer} />
+			return <GameArea
+				key={player.name}
+				player={player}
+				nextPiece={currentRoom.pieces.stack[player.stackIndex] ? currentRoom.pieces.stack[player.stackIndex][0] : PIECES[0].shape[0]}
+				quitGame={onReturnToLobby}
+				numberOfPlayer={numberOfPlayer}
+			/>
 		})
 	}
 
@@ -305,11 +317,15 @@ const Tetris = (props) => {
 		<div style={styles.mainContainerStyle} role={'button'} tabIndex={'0'} onKeyDown={(e) => move(e)} onKeyUp={keyUp}>
 			<Modal
 				open={openModal}
-				onClose={() => { }}
+				// onClose={() => { }}
 				style={styles.modal}
 			>
 				<Grid container style={styles.modalPopUp}>
-					<Grid item xs={12} style={styles.gridItem}><Typography variant={'h4'}>The Winner Is : {winner.name}</Typography></Grid>
+					<Grid item xs={12} style={styles.gridItem}>
+						<Typography variant={'h4'}>
+							{winner ? `The Winner Is : ${winner.name}` : 'YOU LOSE !'}
+						</Typography>
+					</Grid>
 					<Grid item xs={12} style={styles.gridItem}>
 						<Button onClick={onReturnToLobby} type={'button'} style={styles.button} text={'Back to Lobby'} />
 					</Grid>

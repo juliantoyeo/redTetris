@@ -45,10 +45,10 @@ const RoomDisplay = (props) => {
 			<span style={styles.text}>Player Count : {`${playerCount}/${room.maxPlayer}`}</span>
 			{isLobby ?
 				<div style={styles.buttonContainer}>
-					<Button style={{ width: '40%' }} type={'button'} onClick={() => onLeave(room)} text={'Leave'} />
-					{isOwner && <Button style={{ width: '40%', backgroundColor: `rgba(${COLORS.DARK_GREEN}, 1)` }} type={'button'} onClick={() => onClick(room)} text={'Start'} />}
+					<Button className={'leaveRoom'} style={{ width: '40%' }} type={'button'} onClick={() => onLeave(room)} text={'Leave'} />
+					{isOwner && <Button className={'startGame'} style={{ width: '40%', backgroundColor: `rgba(${COLORS.DARK_GREEN}, 1)` }} type={'button'} onClick={() => onClick(room)} text={'Start'} />}
 				</div> :
-				<Button style={{ width: '15%' }} type={'button'} onClick={() => onClick(room)} isDisable={isFull || room.isStarted} text={room.isStarted ? 'Game Started' : isFull ? 'Full' : 'Join'} />
+				<Button className={'joinRoom'} style={{ width: '15%' }} type={'button'} onClick={() => onClick(room)} isDisable={isFull || room.isStarted} text={room.isStarted ? 'Game Started' : isFull ? 'Full' : 'Join'} />
 			}
 		</div>
 	)
