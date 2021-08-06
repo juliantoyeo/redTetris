@@ -4,40 +4,17 @@ import debug from 'debug';
 import { helpersSocket } from './sockets/helpersSocket';
 import { playersSocket } from './sockets/playersSocket';
 import { roomsSocket } from './sockets/roomsSocket';
-import Player from './class/Player';
-
-import { SOCKET_EVENTS } from '../client/src/constants/socketConstants'
-import { TEST_BOARD } from '../client/src/constants/gameConstant'
-
-import Game from './class/Game';
 
 const logerror = debug('tetris:error');
 const loginfo = debug('tetris:info');
 
-const clients = new Array();
-const rooms = new Array();
-
-const player1 = new Player({ name: 'player1' })
-const player2 = new Player({ name: 'player3' })
-player1.update({ board: TEST_BOARD.L_SPIN, gameStatus: { score: 100, rows: 0, level: 0} })
-player2.update({ board: TEST_BOARD.T_SPIN, gameStatus: { score: 200, rows: 0, level: 0} })
-
-const newRoom = new Game({
-	name:'testRoom',
-	owner:'aaaa',
-	players: [player1, player2],
-	maxPlayer: 10
-})
-
-// rooms.push(newRoom)
+export const clients = new Array();
+export const rooms = new Array();
 
 
 const initApp = (app, params, cb) => {
 	const { host, port } = params;
 	const handler = (req, res) => {
-		// console.log('req', req.url)
-		// console.log('res', res)
-		// const file = req.url === '/bundle.js' ? '/../../build/bundle.js' : '/../../index.html';
 		let file = '../client/build';
 		if (req.url === '/')
 			file = `${file}/index.html`;

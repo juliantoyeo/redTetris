@@ -1,7 +1,7 @@
 import Game from '../class/Game';
 import Player from '../class/Player';
-import { SOCKET_RES, SOCKET_EVENTS } from '../../client/src/constants/socketConstants';
-import { PIECE_STACK_LENGTH, STACK_LIMIT, BOARD_SIZE } from '../../client/src/constants/gameConstant';
+import { SOCKET_RES, SOCKET_EVENTS } from '../constants/socketConstants';
+import { PIECE_STACK_LENGTH, STACK_LIMIT, BOARD_SIZE } from '../constants/gameConstant';
 
 export const roomsSocket = (clients, rooms, io, socket) => {
 
@@ -23,7 +23,7 @@ export const roomsSocket = (clients, rooms, io, socket) => {
 
 	socket.on(SOCKET_EVENTS.CREATE_ROOM, (data, callback) => {
 		const { name, owner, maxPlayer } = data.newRoom;
-		if (rooms.findIndex((room) => room.name == data.newRoom.name) == -1) {
+		if (rooms.findIndex((room) => room.name == name) == -1) {
 			const playerIndex = clients.findIndex((client) => client.name == data.playerName);
 			if (playerIndex == -1) {
 				callback({
@@ -127,7 +127,6 @@ export const roomsSocket = (clients, rooms, io, socket) => {
 			currentRoom.pieces.generatePieces(PIECE_STACK_LENGTH);
 			currentRoom.players.forEach((player) => player.createBoard());
 			io.to(roomName).emit(SOCKET_EVENTS.START_GAME, currentRoom);
-			console.log("currentRoom", currentRoom);
 			io.sockets.emit(SOCKET_EVENTS.UPDATE_ROOM, currentRoom);
 			callback({
 				status: 200,

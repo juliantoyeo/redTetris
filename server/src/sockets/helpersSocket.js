@@ -1,4 +1,4 @@
-import { SOCKET_EVENTS } from '../../client/src/constants/socketConstants'
+import { SOCKET_EVENTS } from '../constants/socketConstants'
 
 export const helpersSocket = (clients, rooms, io, socket) => {
 

@@ -1,4 +1,4 @@
-import { PIECES } from '../../client/src/constants/gameConstant';
+import { PIECES } from '../constants/gameConstant';
 
 class Piece {
 	constructor(props) {

@@ -1,4 +1,4 @@
-import { BOARD_SIZE } from '../../client/src/constants/gameConstant';
+import { BOARD_SIZE } from '../constants/gameConstant';
 
 class Player {
 	constructor(props) {

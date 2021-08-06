@@ -1,5 +1,5 @@
 import Player from '../class/Player';
-import { SOCKET_RES, SOCKET_EVENTS } from '../../client/src/constants/socketConstants'
+import { SOCKET_RES, SOCKET_EVENTS } from '../constants/socketConstants'
 
 export const playersSocket = (clients, rooms, io, socket) => {
 
