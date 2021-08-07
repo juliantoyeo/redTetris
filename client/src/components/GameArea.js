@@ -14,22 +14,9 @@ const mainContainerStyle = (props) => {
 		justifyContent: 'space-evenly',
 		margin: '1vw',
 		fontSize: props.numberOfPlayer > 3 ? '0.8vw' : '1vw',
-		border: '1px solid #333'
+		border: '1px solid #333',
+		position: 'relative'
 	});
-}
-
-const gameOverStyle = (props) => {
-	return ({
-		position: 'absolute',
-		backgroundColor: 'rgba(50, 50, 50, 0.8)',
-		width: 'inherit',
-		height: `${props.height}px`,
-		display: 'flex',
-		justifyContent: 'center',
-		alignItems: 'center',
-		color: 'red',
-		fontSize: '5em'
-	})
 }
 
 const previewContainerStyle = (props) => {
@@ -62,27 +49,31 @@ const styles = {
 		flexDirection: 'column',
 		justifyContent: 'space-evenly',
 		height: '40%'
+	},
+	gameOverStyle: {
+		position: 'absolute',
+		backgroundColor: 'rgba(50, 50, 50, 0.8)',
+		width: '100%',
+		height: '100%',
+		display: 'flex',
+		justifyContent: 'center',
+		alignItems: 'center',
+		color: 'red',
+		fontSize: '5em'
 	}
 }
 
 const GameArea = (props) => {
 	const { player, nextPiece, quitGame, numberOfPlayer } = props;
-	const [parentHeight, setParentHeight] = useState(null);
 	let cellSize = CELL_SIZE;
 
 	if (numberOfPlayer > 3)
 		cellSize = cellSize - 0.5;
 
-	useEffect(() => {
-		if (document.getElementById('gameArea')) {
-			setParentHeight(document.getElementById('gameArea').clientHeight);
-		}
-	}, [document.getElementById('gameArea')]);
-
 	return (
 		<div style={mainContainerStyle({ numberOfPlayer: numberOfPlayer })} id={'gameArea'}>
-			{player.gameOver && 
-				<div style={gameOverStyle({ height: parentHeight })}>
+			{player.gameOver &&
+				<div style={styles.gameOverStyle}>
 					<span>GAME OVER</span>
 				</div>
 			}
@@ -99,7 +90,6 @@ const GameArea = (props) => {
 					<span>Score : {player.gameStatus.score}</span>
 					<span>Rows : {player.gameStatus.rows}</span>
 					<span>Level : {player.gameStatus.level}</span>
-					{player.gameOver && <span>GAME OVER!!</span>}
 				</div>
 				<Button onClick={quitGame} type={'button'} text={'Quit Game'} />
 			</div>

@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test NameForm component Should render properly 1`] = `
+<div
+  className="formContainer"
+>
+  <span
+    className="header"
+  >
+    Welcome to Red Tetris!
+  </span>
+  <form
+    className="standardForm"
+    key="nameForm"
+    style={
+      Object {
+        "flexDirection": "column",
+        "height": "15vw",
+      }
+    }
+  >
+    <label
+      style={
+        Object {
+          "width": "70%",
+        }
+      }
+    >
+      Enter Your Name
+    </label>
+    <input
+      autoComplete="off"
+      className="inputField"
+      name="playerName"
+      onChange={[Function]}
+      required={true}
+      style={
+        Object {
+          "width": "50%",
+        }
+      }
+      type="text"
+    />
+    <Button
+      style={
+        Object {
+          "width": "15%",
+        }
+      }
+      text="Play"
+      type="submit"
+    />
+  </form>
+</div>
+`;

@@ -206,15 +206,17 @@ const Tetris = (props) => {
 
 	const onReturnToLobby = () => {
 		history.push('/');
-		const data = {
-			roomName,
-			playerName: currPlayer.name,
-			isJoinRoom: false
-		}
-		if (currentRoom.players.length > 1) {
-			doRoomSocketEvent(socket, () => { }, SOCKET_EVENTS.UPDATE_ROOM, data);
-		} else {
-			doRoomSocketEvent(socket, () => { }, SOCKET_EVENTS.DELETE_ROOM, data);
+		if (currPlayer) {
+			const data = {
+				roomName,
+				playerName: currPlayer.name,
+				isJoinRoom: false
+			}
+			if (currentRoom.players.length > 1) {
+				doRoomSocketEvent(socket, () => { }, SOCKET_EVENTS.UPDATE_ROOM, data);
+			} else {
+				doRoomSocketEvent(socket, () => { }, SOCKET_EVENTS.DELETE_ROOM, data);
+			}
 		}
 	}
 
@@ -245,15 +247,6 @@ const Tetris = (props) => {
 	}
 
 	const drop = () => {
-		// if (gameStatus.rows > (gameStatus.level + 1) * 10) {
-		// 	setGameStatus(prev => ({
-		// 		...prev,
-		// 		level: prev.level + 1
-		// 	}));
-		// 	const newDropTime = defaulDropTime / (gameStatus.level + 1) + 200;
-		// 	setCurrentDropTime(newDropTime);
-		// 	setDropTime(newDropTime);
-		// }
 		if (!checkCollision(piece, boardWithLandedPiece, { x: 0, y: 1 }))
 			updatePiece(boardWithLandedPiece, { x: 0, y: 1 }, false);
 		else {

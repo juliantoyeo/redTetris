@@ -1,0 +1,253 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test Home component Should render no room 1`] = `
+<div
+  style={
+    Object {
+      "alignItems": "center",
+      "backgroundColor": "#555",
+      "backgroundSize": "cover",
+      "boxSizing": "border-box",
+      "color": "white",
+      "display": "flex",
+      "fontFamily": "Avenir Next",
+      "fontSize": "1vw",
+      "height": "100vh",
+      "justifyContent": "center",
+      "width": "100vw",
+    }
+  }
+>
+  <div
+    style={
+      Object {
+        "alignItems": "center",
+        "border": "2px solid #333",
+        "borderRadius": "3vw",
+        "display": "flex",
+        "flexDirection": "column",
+        "justifyContent": "center",
+        "padding": "2vw",
+        "width": "80vw",
+      }
+    }
+  >
+    <span
+      className="header"
+    >
+      Available Rooms
+    </span>
+    <div
+      style={
+        Object {
+          "maxHeight": "20vw",
+          "minHeight": "2vw",
+          "overflow": "auto",
+          "padding": "1vw 0",
+          "textAlign": "center",
+          "width": "100%",
+        }
+      }
+    >
+      <RoomDisplay
+        onClick={null}
+        room={null}
+      />
+    </div>
+    <RoomCreationForm
+      onChange={[Function]}
+      onSubmit={[Function]}
+    />
+  </div>
+</div>
+`;
+
+exports[`Test Home component Should render no room found 1`] = `
+<div
+  style={
+    Object {
+      "alignItems": "center",
+      "backgroundColor": "#555",
+      "backgroundSize": "cover",
+      "boxSizing": "border-box",
+      "color": "white",
+      "display": "flex",
+      "fontFamily": "Avenir Next",
+      "fontSize": "1vw",
+      "height": "100vh",
+      "justifyContent": "center",
+      "width": "100vw",
+    }
+  }
+>
+  <div
+    style={
+      Object {
+        "alignItems": "center",
+        "border": "2px solid #333",
+        "borderRadius": "3vw",
+        "display": "flex",
+        "flexDirection": "column",
+        "justifyContent": "center",
+        "padding": "2vw",
+        "width": "80vw",
+      }
+    }
+  >
+    <span
+      className="header"
+    >
+      Game Lobby
+    </span>
+    <div
+      style={
+        Object {
+          "maxHeight": "20vw",
+          "minHeight": "2vw",
+          "overflow": "auto",
+          "padding": "1vw 0",
+          "textAlign": "center",
+          "width": "100%",
+        }
+      }
+    >
+      <RoomDisplay
+        onClick={null}
+        room={null}
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Test Home component Should render properly 1`] = `
+<div
+  style={
+    Object {
+      "alignItems": "center",
+      "backgroundColor": "#555",
+      "backgroundSize": "cover",
+      "boxSizing": "border-box",
+      "color": "white",
+      "display": "flex",
+      "fontFamily": "Avenir Next",
+      "fontSize": "1vw",
+      "height": "100vh",
+      "justifyContent": "center",
+      "width": "100vw",
+    }
+  }
+>
+  <div
+    style={
+      Object {
+        "alignItems": "center",
+        "border": "2px solid #333",
+        "borderRadius": "3vw",
+        "display": "flex",
+        "flexDirection": "column",
+        "justifyContent": "center",
+        "padding": "2vw",
+        "width": "80vw",
+      }
+    }
+  >
+    <span
+      className="header"
+    >
+      Available Rooms
+    </span>
+    <div
+      style={
+        Object {
+          "maxHeight": "20vw",
+          "minHeight": "2vw",
+          "overflow": "auto",
+          "padding": "1vw 0",
+          "textAlign": "center",
+          "width": "100%",
+        }
+      }
+    >
+      <RoomDisplay
+        key="room1#0"
+        onClick={[Function]}
+        room={
+          Object {
+            "name": "room1",
+          }
+        }
+      />
+    </div>
+    <RoomCreationForm
+      onChange={[Function]}
+      onSubmit={[Function]}
+    />
+  </div>
+</div>
+`;
+
+exports[`Test Home component Should render selected room and test onStartGame 1`] = `
+<div
+  style={
+    Object {
+      "alignItems": "center",
+      "backgroundColor": "#555",
+      "backgroundSize": "cover",
+      "boxSizing": "border-box",
+      "color": "white",
+      "display": "flex",
+      "fontFamily": "Avenir Next",
+      "fontSize": "1vw",
+      "height": "100vh",
+      "justifyContent": "center",
+      "width": "100vw",
+    }
+  }
+>
+  <div
+    style={
+      Object {
+        "alignItems": "center",
+        "border": "2px solid #333",
+        "borderRadius": "3vw",
+        "display": "flex",
+        "flexDirection": "column",
+        "justifyContent": "center",
+        "padding": "2vw",
+        "width": "80vw",
+      }
+    }
+  >
+    <span
+      className="header"
+    >
+      Game Lobby
+    </span>
+    <div
+      style={
+        Object {
+          "maxHeight": "20vw",
+          "minHeight": "2vw",
+          "overflow": "auto",
+          "padding": "1vw 0",
+          "textAlign": "center",
+          "width": "100%",
+        }
+      }
+    >
+      <RoomDisplay
+        isLobby={true}
+        isOwner={false}
+        onClick={[Function]}
+        onLeave={[Function]}
+        room={
+          Object {
+            "name": "room1",
+          }
+        }
+      />
+    </div>
+  </div>
+</div>
+`;

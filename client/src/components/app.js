@@ -15,10 +15,10 @@ import { initiateSocket, disconnectSocket } from '../actions/server';
 
 const App = () => {
 	const [state, dispatch] = useCombinedReducers();
-	const [socket, setSocket] = useState(null);
+	const [socket, setSocket] = React.useState(null);
 	const history = createMemoryHistory();
 
-	useEffect(() => {
+	React.useEffect(() => {
 		if (!socket) {
 			setSocket(initiateSocket(dispatch));
 		}

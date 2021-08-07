@@ -2,6 +2,15 @@ import React from 'react';
 import { mount, shallow } from 'enzyme';
 import App from '../app';
 import { createMemoryHistory } from 'history'
+import * as server from '../../actions/server';
+import MockedSocket from 'socket.io-mock';
+
+
+let socket = new MockedSocket();
+socket.emit = jest.fn();
+
+// eslint-disable-next-line no-import-assign
+server.initiateSocket = jest.fn();
 // import { MemoryRouter, HashRouter } from 'react-router';
 
 
@@ -9,8 +18,8 @@ const reactRouter = require('react-router-dom');
 const { MemoryRouter } = reactRouter;
 const history = createMemoryHistory({ initialEntries: [{ pathname: '/', key: 'testKey' }] })
 const MockBrowserRouter = ({ children }) => (
-	<MemoryRouter history={history} initialEntries={[ { pathname: '/', key: 'testKey' } ]}>
-		{ children }
+	<MemoryRouter history={history} initialEntries={[{ pathname: '/', key: 'testKey' }]}>
+		{children}
 	</MemoryRouter>
 );
 reactRouter.HashRouter = MockBrowserRouter;
@@ -30,6 +39,14 @@ reactRouter.HashRouter = MockBrowserRouter;
 // }
 
 describe('Test App component', () => {
+	beforeEach(() => {
+
+		jest.spyOn(React, 'useEffect').mockImplementation(f => f());
+
+		React.useState = jest.fn()
+			.mockReturnValueOnce([socket, () => {}])
+
+	});
 	it('Should render properly', () => {
 		// const wrapper = shallow(<App/>)
 		// const wrapper = shallow(
@@ -37,7 +54,7 @@ describe('Test App component', () => {
 		// 		<App />
 		// 	</MemoryRouter>
 		// );
-		const wrapper = shallow(<App/>);
+		const wrapper = shallow(<App />);
 		// const router = wrapper.find(MockBrowserRouter);
 		// router.props = { history: 'test'};
 		// router.prop('history') = 'test';
@@ -55,6 +72,12 @@ describe('Test App component', () => {
 		// provider.setProps({ initialEntries: [ { pathname: '/', key: 'testKey' } ] });
 		// expect(wrapper).toMatchSnapshot();
 		expect(wrapper.exists()).toBe(true);
-	})
+	});
+	it('Should render run setSocket', () => {
+		React.useState = jest.fn()
+			.mockReturnValueOnce([null, () => {}])
+
+		shallow(<App />);
+	});
 
 });

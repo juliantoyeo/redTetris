@@ -12,6 +12,7 @@ exports[`Test GameArea component Should render game over 1`] = `
       "justifyContent": "space-evenly",
       "margin": "1vw",
       "maxWidth": "50vw",
+      "position": "relative",
       "width": "30%",
     }
   }
@@ -24,10 +25,10 @@ exports[`Test GameArea component Should render game over 1`] = `
         "color": "red",
         "display": "flex",
         "fontSize": "5em",
-        "height": "nullpx",
+        "height": "100%",
         "justifyContent": "center",
         "position": "absolute",
-        "width": "inherit",
+        "width": "100%",
       }
     }
   >
@@ -462,9 +463,6 @@ exports[`Test GameArea component Should render game over 1`] = `
         Level : 
         1
       </span>
-      <span>
-        GAME OVER!!
-      </span>
     </div>
     <Button
       text="Quit Game"
@@ -486,6 +484,7 @@ exports[`Test GameArea component Should render properly 1`] = `
       "justifyContent": "space-evenly",
       "margin": "1vw",
       "maxWidth": "50vw",
+      "position": "relative",
       "width": "30%",
     }
   }
@@ -938,6 +937,7 @@ exports[`Test GameArea component Should render properly for 4 player 1`] = `
       "justifyContent": "space-evenly",
       "margin": "1vw",
       "maxWidth": "50vw",
+      "position": "relative",
       "width": "20%",
     }
   }
@@ -950,10 +950,10 @@ exports[`Test GameArea component Should render properly for 4 player 1`] = `
         "color": "red",
         "display": "flex",
         "fontSize": "5em",
-        "height": "nullpx",
+        "height": "100%",
         "justifyContent": "center",
         "position": "absolute",
-        "width": "inherit",
+        "width": "100%",
       }
     }
   >
@@ -1387,9 +1387,6 @@ exports[`Test GameArea component Should render properly for 4 player 1`] = `
       <span>
         Level : 
         1
-      </span>
-      <span>
-        GAME OVER!!
       </span>
     </div>
     <Button

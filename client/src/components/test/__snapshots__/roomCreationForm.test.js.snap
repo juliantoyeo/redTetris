@@ -1,0 +1,62 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test RoomCreationForm component Should render properly 1`] = `
+<div
+  className="formContainer"
+>
+  <span
+    className="header"
+  >
+    Create Room
+  </span>
+  <form
+    className="standardForm"
+    key="roomForm"
+  >
+    <label>
+      Room Name
+    </label>
+    <input
+      autoComplete="off"
+      className="inputField"
+      name="roomName"
+      onChange={[Function]}
+      required={true}
+      style={
+        Object {
+          "width": "20%",
+        }
+      }
+      type="text"
+    />
+    <label>
+      Max Player
+    </label>
+    <input
+      className="inputField"
+      defaultValue={2}
+      max={8}
+      min="1"
+      name="maxPlayer"
+      onChange={[Function]}
+      required={true}
+      step="1"
+      style={
+        Object {
+          "width": "20%",
+        }
+      }
+      type="number"
+    />
+    <Button
+      style={
+        Object {
+          "width": "15%",
+        }
+      }
+      text="Create"
+      type="submit"
+    />
+  </form>
+</div>
+`;

@@ -8,7 +8,7 @@ import { SOCKET_EVENTS } from '../constants/socketConstants';
 import { errorAlert } from '../utils/errorUtils';
 import { doRoomSocketEvent } from '../utils/socketUtils';
 
-import combinedContext from '../contexts/combinedContext';
+import { useAppContext } from '../contexts/combinedContext';
 
 import RoomDisplay from './RoomDisplay';
 import NameForm from './form/NameForm';
@@ -52,16 +52,16 @@ const styles = {
 const Home = (props) => {
 	const { socket } = props;
 	const history = useHistory();
-	const [state, dispatch] = useContext(combinedContext);
+	const [state, dispatch] = useAppContext();
 	const { currentPlayer, rooms } = state;
-	const [form, setForm] = useState({ playerName: '', roomName: '', maxPlayer: 10 });
-	const [selectedRoom, setSelectedRoom] = useState(null);
+	const [selectedRoom, setSelectedRoom] = React.useState(null);
+	const [form, setForm] = React.useState({ playerName: '', roomName: '', maxPlayer: 10 });
 
-	useEffect(() => {
+	React.useEffect(() => {
 		if (socket) {
 			socket.off(SOCKET_EVENTS.START_GAME);
 			socket.on(SOCKET_EVENTS.START_GAME, (updatedRoom) => {
-				console.log('WebSocket start game event received :', updatedRoom);
+				// console.log('WebSocket start game event received :', updatedRoom);
 				history.push(`/${updatedRoom.name}[${currentPlayer.name}]`);
 			});
 		}
