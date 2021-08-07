@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow, mount } from 'enzyme';
+import { shallow } from 'enzyme';
 import enableHooks from 'jest-react-hooks-shallow';
 import _ from 'lodash';
 
@@ -130,8 +130,4 @@ describe('Test Home component', () => {
 		const nameForm = wrapper.find('NameForm');
 		nameForm.simulate('submit', { preventDefault: jest.fn() });
 	});
-	// it('Should render with effect', () => {
-		
-	// 	const wrapper = shallow(<Home />);
-	// });
 });

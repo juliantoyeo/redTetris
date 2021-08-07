@@ -78,23 +78,23 @@ const Tetris = (props) => {
 	const history = useHistory();
 	const [state] = useContext(combinedContext);
 	const defaulDropTime = 1000;
-	const [currPlayer, setCurrPlayer] = useState(null);
-	const [currentRoom, setCurrentRoom] = useState(null);
-	const [countDown, setCountDown] = useState(0);
-	const [dropTime, setDropTime] = useState(null);
-	const [currentDropTime, setCurrentDropTime] = useState(defaulDropTime);
-	const [gameOver, setGameOver] = useState(true);
+	const [currPlayer, setCurrPlayer] = React.useState(null);
+	const [currentRoom, setCurrentRoom] = React.useState(null);
+	const [countDown, setCountDown] = React.useState(0);
+	const [dropTime, setDropTime] = React.useState(null);
+	const [currentDropTime, setCurrentDropTime] = React.useState(defaulDropTime);
+	const [gameOver, setGameOver] = React.useState(true);
 	const [piece, ghostPiece, updatePiece, getPiece, pieceRotate] = usePiece(socket, currentRoom, currPlayer, setCurrPlayer);
 	const [, setBoard, boardWithLandedPiece, setBoardWithLandedPiece, rowsCleared, putBlockingRow] = useBoard(socket, roomName, piece, ghostPiece, getPiece, gameOver);
 	const [gameStatus, setGameStatus] = useGameStatus(rowsCleared);
-	const [gameEnded, setGameEnded] = useState(false);
-	const [numberOfPlayer, setNumberOfPlayer] = useState(1);
-	const [openModal, setOpenModal] = useState(false);
-	const [winner, setWinner] = useState({ name: '' });
+	const [gameEnded, setGameEnded] = React.useState(false);
+	const [numberOfPlayer, setNumberOfPlayer] = React.useState(1);
+	const [openModal, setOpenModal] = React.useState(false);
+	const [winner, setWinner] = React.useState({ name: '' });
 
 	// console.log('boardWithLandedPiece', boardWithLandedPiece);
 
-	useEffect(() => {
+	React.useEffect(() => {
 		if (socket) {
 			socket.on(SOCKET_EVENTS.GAME_IS_OVER, (winnerPlayer) => {
 				setGameEnded(true);
@@ -105,7 +105,7 @@ const Tetris = (props) => {
 		}
 	}, []);
 
-	useEffect(() => {
+	React.useEffect(() => {
 		return history.listen(location => {
 			if (history.action === 'POP') {
 				onReturnToLobby();
@@ -113,7 +113,7 @@ const Tetris = (props) => {
 		})
 	}, [currPlayer])
 
-	useEffect(() => {
+	React.useEffect(() => {
 		if (socket) {
 			socket.off(SOCKET_EVENTS.ADD_BLOCKING_ROW);
 			socket.on(SOCKET_EVENTS.ADD_BLOCKING_ROW, (dataReceived) => {
@@ -134,7 +134,7 @@ const Tetris = (props) => {
 		}
 	}, [piece, boardWithLandedPiece]);
 
-	useEffect(() => {
+	React.useEffect(() => {
 		if (state.rooms) {
 			const room = _.find(state.rooms, (room) => room.name === roomName);
 			if (room) {
@@ -145,7 +145,7 @@ const Tetris = (props) => {
 
 	}, [state.rooms]);
 
-	useEffect(() => {
+	React.useEffect(() => {
 		if (currentRoom) {
 			const player = _.find(currentRoom.players, (player) => player.name === state.currentPlayer.name);
 			if (player) {
@@ -154,7 +154,7 @@ const Tetris = (props) => {
 		}
 	}, [currentRoom]);
 
-	useEffect(() => {
+	React.useEffect(() => {
 		if (checkCollision(piece, boardWithLandedPiece, { x: 0, y: 0 })) {
 			if (piece.pos.y < 1) {
 				stopGame();
