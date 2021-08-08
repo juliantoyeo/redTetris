@@ -4,17 +4,11 @@ import params from '../params';
 import { SOCKET_EVENTS } from '../constants/socketConstants';
 import { addRoom, updateRoom, deleteRoom } from '../actions/roomActions';
 
-export const ping = () => {
-	return ({
-		type: 'server/ping'
-	});
-};
-
 export const initiateSocket = (dispatch) => {
 	const newSocket = socketIOClient(params.server.url);
 
 	newSocket.emit(SOCKET_EVENTS.FECTH_ALL_ROOM, (res) => {
-		console.log('WebSocket fecth all room event received :', res);
+		// console.log('WebSocket fecth all room event received :', res);
 		if (res.status === 200) {
 			_.map(res.rooms, (room) => {
 				dispatch(addRoom(room));
@@ -38,8 +32,8 @@ export const initiateSocket = (dispatch) => {
 	});
 
 	newSocket.on('disconnect', () => {
-		console.log('server disconected')
-		alert('Server disconnected press OK to refresh')
+		// console.log('server disconected')
+		// alert('Server disconnected press OK to refresh')
 		window.location.reload();
 	});
 
@@ -47,6 +41,6 @@ export const initiateSocket = (dispatch) => {
 };
 
 export const disconnectSocket = (socket) => {
-	console.log('disconnecting socket');
+	// console.log('disconnecting socket');
 	if (socket) socket.disconnect();
 };

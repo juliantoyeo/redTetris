@@ -45,7 +45,7 @@ export const checkCollision = (piece, boardWithLandedPiece, { x: moveX, y: moveY
 
 export const getLandPosition = (piece, boardWithLandedPiece) => {
 	// console.log("boardWithLandedPiece", boardWithLandedPiece)
-	console.log(piece)
+	// console.log(piece)
 	// let moveY = BOARD_SIZE.HEIGHT - 1
 	let moveY = piece.pos.y;
 	if (piece.pos.y <= 0)

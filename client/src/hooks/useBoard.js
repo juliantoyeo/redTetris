@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import _ from 'lodash';
 
 import { createBoard } from '../utils/boardUtils';
@@ -6,22 +6,16 @@ import { BOARD_SIZE } from '../constants/gameConstant';
 import { SOCKET_EVENTS } from '../constants/socketConstants';
 
 export const useBoard = (socket, roomName, currentPiece, ghostPiece, getPiece, gameOver) => {
-	const [board, setBoard] = useState(null);
-	const [boardWithLandedPiece, setBoardWithLandedPiece] = useState(createBoard());
-	const [rowsCleared, setRowsCleared] = useState(0);
-
-	useEffect(() => {
-		setRowsCleared(0);
-		setBoard(updateBoard());
-	}, [currentPiece]);
+	const [board, setBoard] = React.useState(null);
+	const [boardWithLandedPiece, setBoardWithLandedPiece] = React.useState(createBoard());
+	const [rowsCleared, setRowsCleared] = React.useState(0);
 
 	const findEmptyCell = (row) => {
 		let i = 0;
-		while (row[i])
-		{
+		while (row[i]) {
 			if (row[i] === '0' || row[i] === 'B')
 				return true;
-			i++	
+			i++
 		}
 	}
 
@@ -57,8 +51,7 @@ export const useBoard = (socket, roomName, currentPiece, ghostPiece, getPiece, g
 		let newBoard = _.cloneDeep(boardWithLandedPiece);
 		let lineCleared = 0;
 
-		if (ghostPiece)
-		{
+		if (ghostPiece) {
 			for (let y = 0; y < ghostPiece.shape.length; y += 1) {
 				for (let x = 0; x < ghostPiece.shape[y].length; x += 1) {
 					if (ghostPiece.shape[y][x] !== '0') {
@@ -82,7 +75,7 @@ export const useBoard = (socket, roomName, currentPiece, ghostPiece, getPiece, g
 			newBoard = boardWithClearedRow;
 			lineCleared = clearedRow;
 			if (clearedRow > 0) {
-				if (socket) socket.emit('emit_room', { roomName, emitEvent: SOCKET_EVENTS.ADD_BLOCKING_ROW , dataToSent: { id: socket.id, clearedRow } });
+				if (socket) socket.emit('emit_room', { roomName, emitEvent: SOCKET_EVENTS.ADD_BLOCKING_ROW, dataToSent: { id: socket.id, clearedRow } });
 			}
 
 			getPiece(newBoard);
@@ -102,6 +95,11 @@ export const useBoard = (socket, roomName, currentPiece, ghostPiece, getPiece, g
 		});
 		return newBoard;
 	}
+
+	React.useEffect(() => {
+		setRowsCleared(0);
+		setBoard(updateBoard());
+	}, [currentPiece]);
 
 	return [board, setBoard, boardWithLandedPiece, setBoardWithLandedPiece, rowsCleared, putBlockingRow];
 }

@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 
 export const useGameStatus = (rowsCleared) => {
-	const [gameStatus, setGameStatus] = useState({
+	const [gameStatus, setGameStatus] = React.useState({
 		score: 0,
 		rows: 0,
 		level: 0
@@ -19,7 +19,7 @@ export const useGameStatus = (rowsCleared) => {
 		}
 	}
 
-	useEffect(() => {
+	React.useEffect(() => {
 		calcScore()
 	}, [rowsCleared])
 

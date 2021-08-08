@@ -1,7 +1,7 @@
 import chai from "chai"
 import { startServer, configureStore } from './helpers/server'
 import rootReducer from '../src/client/reducers'
-import { ping } from '../src/client/actions/server'
+// import { ping } from '../src/client/actions/server'
 import io from 'socket.io-client'
 import params from '../params'
 
@@ -22,6 +22,6 @@ describe('Fake server test', function () {
 		const store = configureStore(rootReducer, socket, initialState, {
 			'pong': () => done()
 		})
-		store.dispatch(ping())
+		// store.dispatch(ping())
 	});
 });

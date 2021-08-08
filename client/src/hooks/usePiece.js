@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import _ from 'lodash';
 
 import { checkCollision, getLandPosition } from '../utils/boardUtils';
@@ -13,15 +13,14 @@ export const usePiece = (socket, currentRoom, currPlayer, setCurrPlayer) => {
 		shape: PIECES[0].shape[0],
 		landed: false
 	}
-	const [piece, setPiece] = useState(initPiece);
-	const [ghostPiece, setGhostPiece] = useState({
+	const [piece, setPiece] = React.useState(initPiece);
+	const [ghostPiece, setGhostPiece] = React.useState({
 		...initPiece,
 		type: 'X'
 	})
 
-	const getGhostPiece = (newPiece, boardWithLandedPiece) =>
-	{
-		const ghostPieceShape = Array.from(new Array(newPiece.shape.length), () => 
+	const getGhostPiece = (newPiece, boardWithLandedPiece) => {
+		const ghostPieceShape = Array.from(new Array(newPiece.shape.length), () =>
 			new Array(newPiece.shape.length).fill('0')
 		);
 		for (let y = 0; y < newPiece.shape.length; y += 1) {
@@ -59,14 +58,13 @@ export const usePiece = (socket, currentRoom, currPlayer, setCurrPlayer) => {
 		if (dir === -1)
 			wallKickSet = clonedPiece.rotation;
 		let i = 0;
-		while (checkCollision(clonedPiece, boardWithLandedPiece, { x: 0, y: 0}))
-		{
+		while (checkCollision(clonedPiece, boardWithLandedPiece, { x: 0, y: 0 })) {
 			if (i > 3) {
 				clonedPiece = piece;
 				return;
 			}
 			const offset = wallKickTest[wallKickSet][i];
-			clonedPiece.pos = {x : piece.pos.x + (offset.x * dir), y : piece.pos.y + (offset.y * dir)};
+			clonedPiece.pos = { x: piece.pos.x + (offset.x * dir), y: piece.pos.y + (offset.y * dir) };
 			i++;
 		}
 		getGhostPiece(clonedPiece, boardWithLandedPiece);
@@ -76,7 +74,7 @@ export const usePiece = (socket, currentRoom, currPlayer, setCurrPlayer) => {
 	const updatePiece = (boardWithLandedPiece, dir, landed) => {
 		const newPiece = {
 			...piece,
-			pos: { x: (piece.pos.x + dir.x), y: (piece.pos.y + dir.y )},
+			pos: { x: (piece.pos.x + dir.x), y: (piece.pos.y + dir.y) },
 			landed
 		}
 		getGhostPiece(newPiece, boardWithLandedPiece);
@@ -86,11 +84,10 @@ export const usePiece = (socket, currentRoom, currPlayer, setCurrPlayer) => {
 	const getFirstPos = (rotation, type) => {
 		let x = BOARD_SIZE.WIDTH / 2 - 2;
 		let y = 0;
-		if (type !== 'O')
-		{
+		if (type !== 'O') {
 			if (type === 'I' && rotation === 2)
 				y = -2;
-			else	if (rotation === 2 || type === 'I' && rotation === 0)
+			else if (rotation === 2 || type === 'I' && rotation === 0)
 				y = -1;
 		} else {
 			x += 1;
@@ -111,7 +108,7 @@ export const usePiece = (socket, currentRoom, currPlayer, setCurrPlayer) => {
 
 		getGhostPiece(newPiece, board);
 		setPiece(newPiece);
-		setCurrPlayer((prev) => { return { ...prev, stackIndex: newIndex }});
+		setCurrPlayer((prev) => { return { ...prev, stackIndex: newIndex } });
 		socket.emit(SOCKET_EVENTS.UPDATE_STACK_INDEX, currPlayer, currentRoom.name, (res) => {
 			// console.log(res);
 		});
