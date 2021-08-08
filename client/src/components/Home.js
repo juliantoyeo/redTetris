@@ -1,10 +1,11 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { useHistory } from 'react-router-dom';
 
 import { createPlayer } from '../actions/playerActions';
 import { SOCKET_EVENTS } from '../constants/socketConstants';
+import { GAME_MODE } from '../constants/gameConstant';
 import { errorAlert } from '../utils/errorUtils';
 import { doRoomSocketEvent } from '../utils/socketUtils';
 
@@ -55,7 +56,7 @@ const Home = (props) => {
 	const [state, dispatch] = useAppContext();
 	const { currentPlayer, rooms } = state;
 	const [selectedRoom, setSelectedRoom] = React.useState(null);
-	const [form, setForm] = React.useState({ playerName: '', roomName: '', maxPlayer: 10 });
+	const [form, setForm] = React.useState({ playerName: '', roomName: '', maxPlayer: 2, gameMode: GAME_MODE.NORMAL });
 
 	React.useEffect(() => {
 		if (socket) {
@@ -68,12 +69,22 @@ const Home = (props) => {
 	}, [socket, currentPlayer]);
 
 	const onFormChange = (event, type) => {
-		const value = event.target.value;
-		setForm(prev => ({
-			playerName: type === 'playerName' ? value : prev.playerName,
-			roomName: type === 'roomName' ? value : prev.roomName,
-			maxPlayer: type === 'maxPlayer' ? parseInt(value) : prev.maxPlayer
-		}))
+		let value;
+		if (type === 'gameMode') {
+			value = event;
+		}
+		else {
+			value = event.target.value;
+		}
+		const newForm = {
+			...form,
+			playerName: type === 'playerName' ? value : form.playerName,
+			roomName: type === 'roomName' ? value : form.roomName,
+			maxPlayer: type === 'maxPlayer' ? parseInt(value) : form.maxPlayer,
+			gameMode: type === 'gameMode' ? value : form.gameMode
+		};
+
+		setForm(newForm);
 	}
 
 	const onSubmitName = async (event) => {
@@ -87,7 +98,8 @@ const Home = (props) => {
 			newRoom: {
 				name: form.roomName,
 				owner: currentPlayer.name,
-				maxPlayer: form.maxPlayer
+				maxPlayer: form.maxPlayer,
+				gameMode: form.gameMode
 			},
 			playerName: currentPlayer.name,
 			isJoinRoom: true
@@ -135,7 +147,7 @@ const Home = (props) => {
 					<div style={styles.roomContainer}>
 						{getRooms()}
 					</div>
-					{!selectedRoom && <RoomCreationForm onSubmit={onCreateRoom} onChange={onFormChange} />}
+					{!selectedRoom && <RoomCreationForm onSubmit={onCreateRoom} onChange={onFormChange} form={form} />}
 				</div> :
 				<div style={styles.box}>
 					<NameForm onSubmit={onSubmitName} onChange={onFormChange} />

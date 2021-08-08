@@ -3,6 +3,11 @@ export const BOARD_SIZE = {
 	HEIGHT: 20
 }
 
+export const GAME_MODE = {
+	NORMAL: 'Normal',
+	NO_GHOST_PIECE: 'No Ghost Piece'
+}
+
 export const STACK_LIMIT = 2;
 
 export const PIECE_STACK_LENGTH = 2;

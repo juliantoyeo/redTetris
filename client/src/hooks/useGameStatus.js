@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
+import _ from 'lodash';
 
 export const useGameStatus = (rowsCleared) => {
 	const [gameStatus, setGameStatus] = React.useState({
@@ -11,11 +12,17 @@ export const useGameStatus = (rowsCleared) => {
 
 	const calcScore = () => {
 		if (rowsCleared > 0) {
-			setGameStatus(prev => ({
-				...prev,
-				score: prev.score + linePoints[rowsCleared - 1] * (prev.level + 1),
-				rows: prev.rows + rowsCleared
-			}));
+			const prevGameStatus = _.cloneDeep(gameStatus);
+			const newScore = prevGameStatus.score + linePoints[rowsCleared - 1] * (prevGameStatus.level + 1);
+			const newRows = prevGameStatus.rows + rowsCleared;
+			const newLevel = Math.floor(newRows / 10);
+			const newGameStatus = {
+				...prevGameStatus,
+				score: newScore,
+				rows: newRows,
+				level: newLevel
+			}
+			setGameStatus(newGameStatus);
 		}
 	}
 
@@ -23,5 +30,5 @@ export const useGameStatus = (rowsCleared) => {
 		calcScore()
 	}, [rowsCleared])
 
-	return [gameStatus, setGameStatus];
+	return [gameStatus];
 }

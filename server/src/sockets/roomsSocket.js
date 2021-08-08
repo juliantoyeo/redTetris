@@ -22,7 +22,7 @@ export const roomsSocket = (clients, rooms, io, socket) => {
 	// });
 
 	socket.on(SOCKET_EVENTS.CREATE_ROOM, (data, callback) => {
-		const { name, owner, maxPlayer } = data.newRoom;
+		const { name, owner, maxPlayer, gameMode } = data.newRoom;
 		if (rooms.findIndex((room) => room.name == name) == -1) {
 			const playerIndex = clients.findIndex((client) => client.name == data.playerName);
 			if (playerIndex == -1) {
@@ -32,7 +32,7 @@ export const roomsSocket = (clients, rooms, io, socket) => {
 				});
 			}
 			else {
-				const newRoom = new Game({ name, owner, players: [clients[playerIndex]], maxPlayer });
+				const newRoom = new Game({ name, owner, players: [clients[playerIndex]], maxPlayer, gameMode });
 				rooms.push(newRoom);
 				callback({
 					status: 200,
@@ -135,7 +135,7 @@ export const roomsSocket = (clients, rooms, io, socket) => {
 		}
 	});
 
-	socket.on(SOCKET_EVENTS.UPDATE_BOARD, ( { newBoard, roomName, lineCleared }, callback) => {
+	socket.on(SOCKET_EVENTS.UPDATE_BOARD, ( { newBoard, roomName, gameStatus }, callback) => {
 		const index = rooms.findIndex((room) => room.name == roomName);
 		if (index == -1) {
 			callback({
@@ -153,7 +153,10 @@ export const roomsSocket = (clients, rooms, io, socket) => {
 			const selectedRoom = rooms[index];
 			const selectedPlayer = selectedRoom.players.find((player) => player.id === socket.id);
 			
-			selectedPlayer.update({ board: newBoard });
+			selectedPlayer.update({
+        board: newBoard,
+        gameStatus
+      });
 			callback({
 				status: 200,
 				msg: 'SUCCESS'

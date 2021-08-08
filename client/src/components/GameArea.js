@@ -64,7 +64,7 @@ const styles = {
 }
 
 const GameArea = (props) => {
-	const { player, nextPiece, quitGame, numberOfPlayer } = props;
+	const { player, nextPiece, quitGame, numberOfPlayer, gameMode } = props;
 	let cellSize = CELL_SIZE;
 
 	if (numberOfPlayer > 3)
@@ -78,7 +78,7 @@ const GameArea = (props) => {
 				</div>
 			}
 			<div style={{ width: `${cellSize * BOARD_SIZE.WIDTH}vw` }}>
-				{player.board && <Board board={player.board} cellSize={cellSize} numberOfPlayer={numberOfPlayer} />}
+				{player.board && <Board board={player.board} cellSize={cellSize} numberOfPlayer={numberOfPlayer} gameMode={gameMode}/>}
 			</div>
 			<div style={styles.sideContainer}>
 				<span className={''}>Next Piece</span>
@@ -99,12 +99,10 @@ const GameArea = (props) => {
 
 GameArea.propTypes = {
 	player: PropTypes.object,
-	board: PropTypes.array,
 	nextPiece: PropTypes.array,
-	gameOver: PropTypes.bool,
-	gameStatus: PropTypes.object,
 	quitGame: PropTypes.func,
-	numberOfPlayer: PropTypes.number
+	numberOfPlayer: PropTypes.number,
+	gameMode: PropTypes.string
 };
 
 export default GameArea;

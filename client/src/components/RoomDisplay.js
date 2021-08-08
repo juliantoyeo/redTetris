@@ -20,7 +20,7 @@ const styles = {
 		justifyContent: 'space-evenly'
 	},
 	text: {
-		width: '20%',
+		width: '15%',
 		whiteSpace: 'nowrap',
 		textAlign: 'left',
 		overflow: 'hidden',
@@ -43,6 +43,7 @@ const RoomDisplay = (props) => {
 			<span style={styles.text}>Room Name : {room.name}</span>
 			<span style={styles.text}>Room Owner : {room.owner}</span>
 			<span style={styles.text}>Player Count : {`${playerCount}/${room.maxPlayer}`}</span>
+			<span style={styles.text}>Game Mode : {room.gameMode}</span>
 			{isLobby ?
 				<div style={styles.buttonContainer}>
 					<Button className={'leaveRoom'} style={{ width: '40%' }} type={'button'} onClick={() => onLeave(room)} text={'Leave'} />

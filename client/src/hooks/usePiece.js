@@ -110,11 +110,15 @@ export const usePiece = (socket, currentRoom, currPlayer, setCurrPlayer) => {
 		setPiece(newPiece);
 		setCurrPlayer((prev) => { return { ...prev, stackIndex: newIndex } });
 		socket.emit(SOCKET_EVENTS.UPDATE_STACK_INDEX, currPlayer, currentRoom.name, (res) => {
-			// console.log(res);
+			if (res.status !== 200) {
+				console.log(res.msg);
+			}
 		});
 		if (currentRoom.pieces.stack.length === newIndex + 1) {
 			socket.emit(SOCKET_EVENTS.GET_NEW_STACK, currPlayer, currentRoom.name, currentRoom.pieces.version, (res) => {
-				// console.log(res);
+				if (res.status !== 200) {
+					console.log(res.msg);
+				}
 			});
 		}
 	}

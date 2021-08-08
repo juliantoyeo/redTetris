@@ -5,7 +5,7 @@ class Game {
 		this.name = props.name;
 		this.owner = props.owner;
 		this.players = props.players;
-		this.isSolo = false;
+		this.gameMode = props.gameMode;
 		this.maxPlayer = props.maxPlayer;
 		this.isStarted = false;
 		this.pieces = new Piece();
@@ -26,7 +26,7 @@ class Game {
 		this.name = data.name || this.name;
 		this.owner = data.owner || this.owner;
 		this.players = data.players || this.players;
-		this.isSolo = typeof data.isSolo !== 'undefined' ? data.isSolo : this.isSolo;
+		this.gameMode = typeof data.gameMode !== 'undefined' ? data.gameMode : this.gameMode;
 		this.isStarted = typeof data.isStarted !== 'undefined' ? data.isStarted : this.isStarted;
 	}
 }

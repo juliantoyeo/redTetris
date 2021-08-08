@@ -15,7 +15,7 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"test": "jest",
+		"test": "jest --coverage",
 		"start": "react-scripts start",
 		"build": "react-scripts build --prod"
 	},

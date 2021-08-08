@@ -11,10 +11,6 @@ const mainContainerStyle = (props) => {
 		background: `rgba(${props.color}, 0.8)`,
 		border: `${props.type === '0' ? '1px solid' : `${borderWidth}vw solid`}`,
 		borderColor: `rgba(${props.color}, 1)`
-		// borderBottomColor: `rgba(${props.color}, 0.1)`,
-		// borderRightColor: `rgba(${props.color}, 1)`,
-		// borderTopColor: `rgba(${props.color}, 1)`,
-		// borderLeftColor: `rgba(${props.color}, 0.3)`
 	});
 }
 

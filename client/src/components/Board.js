@@ -3,6 +3,7 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 
 import Cell from './Cell';
+import { GAME_MODE } from '../constants/gameConstant';
 
 const mainContainerStyle = (props) => {
 	return ({
@@ -11,7 +12,6 @@ const mainContainerStyle = (props) => {
 		gridTemplateRows: `repeat(${props.height}, calc(${props.cellSize}vw))`,
 		gridTemplateColumns: `repeat(${props.width}, 1fr)`,
 		gridGap: '1px',
-		// border: '2px solid #333',
 		width: '100%',
 		maxWidth: `${props.cellSize * props.width}vw`,
 		background: 'black'
@@ -19,13 +19,13 @@ const mainContainerStyle = (props) => {
 }
 
 const Board = (props) => {
-	const { board, cellSize, numberOfPlayer, mini } = props;
+	const { board, cellSize, numberOfPlayer, mini, gameMode } = props;
 	const getHeight = () => {
 		if (!mini)
 			return (board.length);
 		else {
 			let rowCount = 0
-			for(let i = 0; i < board.length; i++) {
+			for (let i = 0; i < board.length; i++) {
 				if (checkShouldPrintRow(board[i]))
 					rowCount++;
 			}
@@ -36,7 +36,7 @@ const Board = (props) => {
 	const checkShouldPrintRow = (row) => {
 		if (!mini)
 			return true;
-		for(let i = 0; i < row.length; i++) {
+		for (let i = 0; i < row.length; i++) {
 			if (row[i] !== '0')
 				return true;
 		}
@@ -48,8 +48,12 @@ const Board = (props) => {
 				if (checkShouldPrintRow(row)) {
 					return (
 						_.map(row, (cell, x) => {
+							let pieceType = cell
+							if (gameMode === GAME_MODE.NO_GHOST_PIECE && cell === 'X') {
+								pieceType = '0'
+							}
 							return (
-								<Cell key={x} type={cell} numberOfPlayer={numberOfPlayer} />
+								<Cell key={x} type={pieceType} numberOfPlayer={numberOfPlayer} />
 							);
 						})
 					);
@@ -63,7 +67,8 @@ Board.propTypes = {
 	board: PropTypes.array,
 	cellSize: PropTypes.number,
 	numberOfPlayer: PropTypes.number,
-	mini: PropTypes.bool
+	mini: PropTypes.bool,
+	gameMode: PropTypes.string
 };
 
 export default Board;

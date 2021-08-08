@@ -195,7 +195,11 @@ describe('Red Tetris server tests', () => {
 				() => new Array(BOARD_SIZE.WIDTH).fill('X')
 			),
 			roomName: roomData.newRoom.name,
-			lineCleared: null
+			gameStatus: {
+				score: 0,
+				rows: 0,
+				level: 0
+			}
 		}
 
 		createPlayerTest(socket, roomData.playerName);

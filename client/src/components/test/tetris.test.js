@@ -312,19 +312,47 @@ describe('Test Tetris component', () => {
 		const gameArea = wrapper.find('GameArea').at(0);
 		gameArea.props().quitGame();
 	});
-	// it('Should test useInterval', () => {
+	it('Should test room not found', () => {
+		const newContextValues = [{
+			...state,
+			rooms: []
+		}, jest.fn()];
 
-	// 	React.useState = jest.fn()
-	// 		.mockReturnValueOnce([fakePlayer1, setState]) // currPlayer
-	// 		.mockReturnValueOnce([fakeRoom1, setState]) // currentRoom
-	// 		.mockReturnValueOnce([0, setState]) // countDown
-	// 		.mockReturnValueOnce([null, setState]) // dropTime
-	// 		.mockReturnValueOnce([1000, setState]) // currentDropTime
-	// 		.mockReturnValueOnce([true, setState]) // gameOver
-	// 		.mockReturnValueOnce([1, setState]) // numberOfPlayer
-	// 		.mockReturnValueOnce([false, setState]) // openModal
-	// 		.mockReturnValueOnce(['', setState]) // winner
+		jest
+			.spyOn(AppContext, 'useAppContext')
+			.mockImplementation(() => newContextValues);
 
-	// 	const wrapper = shallow(<Tetris socket={null} />);
-	// });
+		React.useState = jest.fn()
+			.mockReturnValueOnce([null, setState]) // currPlayer
+			.mockReturnValueOnce([null, setState]) // currentRoom
+			.mockReturnValueOnce([0, setState]) // countDown
+			.mockReturnValueOnce([null, setState]) // dropTime
+			.mockReturnValueOnce([1000, setState]) // currentDropTime
+			.mockReturnValueOnce([true, setState]) // gameOver
+			.mockReturnValueOnce([1, setState]) // numberOfPlayer
+			.mockReturnValueOnce([false, setState]) // openModal
+			.mockReturnValueOnce(['', setState]) // winner
+
+		shallow(<Tetris socket={null} />);
+	});
+	it('Should test no state.rooms', () => {
+		const newContextValues = [[], jest.fn()];
+
+		jest
+			.spyOn(AppContext, 'useAppContext')
+			.mockImplementation(() => newContextValues);
+
+		React.useState = jest.fn()
+			.mockReturnValueOnce([null, setState]) // currPlayer
+			.mockReturnValueOnce([null, setState]) // currentRoom
+			.mockReturnValueOnce([0, setState]) // countDown
+			.mockReturnValueOnce([null, setState]) // dropTime
+			.mockReturnValueOnce([1000, setState]) // currentDropTime
+			.mockReturnValueOnce([true, setState]) // gameOver
+			.mockReturnValueOnce([1, setState]) // numberOfPlayer
+			.mockReturnValueOnce([false, setState]) // openModal
+			.mockReturnValueOnce(['', setState]) // winner
+
+		shallow(<Tetris socket={null} />);
+	});
 });

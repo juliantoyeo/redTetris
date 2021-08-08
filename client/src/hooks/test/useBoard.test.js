@@ -67,6 +67,20 @@ jest.mock('../../utils/boardUtils', () => ({
 	createBoard: (...props) => mockCreateBoard(...props)
 }));
 
+// mock useGameStatus
+const mockUseGameStatus = jest.fn();
+
+jest.mock('../useGameStatus', () => ({
+	__esModule: true,
+	useGameStatus: (...props) => mockUseGameStatus(...props)
+}));
+
+mockUseGameStatus.mockReturnValue([{
+	score: 0,
+	rows: 0,
+	level: 0
+}]);
+
 describe('test useBoard', () => {
 	const setState = jest.fn();
 
@@ -85,7 +99,7 @@ describe('test useBoard', () => {
 	});
 
 	test('test useBoard', () => {
-		const [, , , , , ] = useBoard(socket, fakeRoom.name, fakeCurrentPiece, fakeGhostPiece, getPiece, gameOver);
+		const [, , , ,] = useBoard(socket, fakeRoom.name, fakeCurrentPiece, fakeGhostPiece, getPiece, gameOver);
 	});
 	test('test useBoard currentPiece landed', () => {
 		const newFakeCurrentPiece = {
@@ -93,7 +107,7 @@ describe('test useBoard', () => {
 			landed: true
 		};
 
-		const [, , , , , ] = useBoard(socket, fakeRoom.name, newFakeCurrentPiece, fakeGhostPiece, getPiece, gameOver);
+		const [, , , ,] = useBoard(socket, fakeRoom.name, newFakeCurrentPiece, fakeGhostPiece, getPiece, gameOver);
 	});
 	test('test useBoard putBlockingRow', () => {
 		const newFakeCurrentPiece = {
@@ -101,7 +115,7 @@ describe('test useBoard', () => {
 			landed: true
 		};
 
-		const [, , , , , putBlockingRow] = useBoard(socket, fakeRoom.name, newFakeCurrentPiece, fakeGhostPiece, getPiece, gameOver);
+		const [, , , , putBlockingRow] = useBoard(socket, fakeRoom.name, newFakeCurrentPiece, fakeGhostPiece, getPiece, gameOver);
 		putBlockingRow(1);
 	});
 });

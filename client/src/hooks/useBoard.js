@@ -4,11 +4,13 @@ import _ from 'lodash';
 import { createBoard } from '../utils/boardUtils';
 import { BOARD_SIZE } from '../constants/gameConstant';
 import { SOCKET_EVENTS } from '../constants/socketConstants';
+import { useGameStatus } from './useGameStatus';
 
 export const useBoard = (socket, roomName, currentPiece, ghostPiece, getPiece, gameOver) => {
 	const [board, setBoard] = React.useState(null);
 	const [boardWithLandedPiece, setBoardWithLandedPiece] = React.useState(createBoard());
 	const [rowsCleared, setRowsCleared] = React.useState(0);
+	const [gameStatus] = useGameStatus(rowsCleared);
 
 	const findEmptyCell = (row) => {
 		let i = 0;
@@ -49,7 +51,6 @@ export const useBoard = (socket, roomName, currentPiece, ghostPiece, getPiece, g
 
 	const updateBoard = () => {
 		let newBoard = _.cloneDeep(boardWithLandedPiece);
-		let lineCleared = 0;
 
 		if (ghostPiece) {
 			for (let y = 0; y < ghostPiece.shape.length; y += 1) {
@@ -73,7 +74,6 @@ export const useBoard = (socket, roomName, currentPiece, ghostPiece, getPiece, g
 			const { boardWithClearedRow, clearedRow } = checkRows(newBoard);
 
 			newBoard = boardWithClearedRow;
-			lineCleared = clearedRow;
 			if (clearedRow > 0) {
 				if (socket) socket.emit('emit_room', { roomName, emitEvent: SOCKET_EVENTS.ADD_BLOCKING_ROW, dataToSent: { id: socket.id, clearedRow } });
 			}
@@ -85,7 +85,7 @@ export const useBoard = (socket, roomName, currentPiece, ghostPiece, getPiece, g
 		const updateBoardData = {
 			newBoard,
 			roomName,
-			lineCleared
+			gameStatus
 		}
 
 		if (socket) socket.emit(SOCKET_EVENTS.UPDATE_BOARD, updateBoardData, (res) => {
@@ -101,5 +101,5 @@ export const useBoard = (socket, roomName, currentPiece, ghostPiece, getPiece, g
 		setBoard(updateBoard());
 	}, [currentPiece]);
 
-	return [board, setBoard, boardWithLandedPiece, setBoardWithLandedPiece, rowsCleared, putBlockingRow];
+	return [board, setBoard, boardWithLandedPiece, setBoardWithLandedPiece, putBlockingRow];
 }

@@ -14,7 +14,7 @@ import { checkCollision } from '../utils/boardUtils';
 import { useInterval } from '../hooks/useInterval';
 import { usePiece } from '../hooks/usePiece';
 import { useBoard } from '../hooks/useBoard';
-import { useGameStatus } from '../hooks/useGameStatus';
+// import { useGameStatus } from '../hooks/useGameStatus';
 import { KEY_CODE, PIECES } from '../constants/gameConstant';
 import { SOCKET_EVENTS } from '../constants/socketConstants';
 
@@ -77,7 +77,6 @@ const Tetris = (props) => {
 	const { socket } = props;
 	const { roomName } = useParams();
 	const history = useHistory();
-	// const [state] = useContext(combinedContext);
 	const [state] = useAppContext();
 	const defaulDropTime = 1000;
 	const [currPlayer, setCurrPlayer] = React.useState(null);
@@ -86,14 +85,12 @@ const Tetris = (props) => {
 	const [dropTime, setDropTime] = React.useState(null);
 	const [currentDropTime, setCurrentDropTime] = React.useState(defaulDropTime);
 	const [gameOver, setGameOver] = React.useState(true);
-	// const [gameEnded, setGameEnded] = React.useState(false);
 	const [numberOfPlayer, setNumberOfPlayer] = React.useState(1);
 	const [openModal, setOpenModal] = React.useState(false);
 	const [winner, setWinner] = React.useState({ name: '' });
 	const [piece, ghostPiece, updatePiece, getPiece, pieceRotate] = usePiece(socket, currentRoom, currPlayer, setCurrPlayer);
-	const [, setBoard, boardWithLandedPiece, setBoardWithLandedPiece, rowsCleared, putBlockingRow] = useBoard(socket, roomName, piece, ghostPiece, getPiece, gameOver);
-	// const [gameStatus, setGameStatus] = useGameStatus(rowsCleared);
-	
+	const [, setBoard, boardWithLandedPiece, setBoardWithLandedPiece, putBlockingRow] = useBoard(socket, roomName, piece, ghostPiece, getPiece, gameOver);
+
 	const stopGame = () => {
 		setGameOver(true);
 		if (socket)
@@ -109,7 +106,6 @@ const Tetris = (props) => {
 	React.useEffect(() => {
 		if (socket) {
 			socket.on(SOCKET_EVENTS.GAME_IS_OVER, (winnerPlayer) => {
-				// setGameEnded(true);
 				setDropTime(null);
 				setWinner(winnerPlayer)
 				setOpenModal(true);
@@ -153,8 +149,13 @@ const Tetris = (props) => {
 				setNumberOfPlayer(room.players.length);
 				setCurrentRoom(room);
 			}
+			else {
+				history.push('/');
+			}
 		}
-
+		else {
+			history.push('/');
+		}
 	}, [state.rooms]);
 
 	React.useEffect(() => {
@@ -212,7 +213,7 @@ const Tetris = (props) => {
 		}
 	}
 
-	
+
 
 	const movePiece = (x) => {
 		if (!checkCollision(piece, boardWithLandedPiece, { x: x, y: 0 }))
@@ -273,6 +274,7 @@ const Tetris = (props) => {
 				nextPiece={currentRoom.pieces.stack[player.stackIndex] ? currentRoom.pieces.stack[player.stackIndex][0] : PIECES[0].shape[0]}
 				quitGame={onReturnToLobby}
 				numberOfPlayer={numberOfPlayer}
+				gameMode={currentRoom.gameMode}
 			/>
 		})
 	}
@@ -300,7 +302,7 @@ const Tetris = (props) => {
 					</Grid>
 				</Grid>
 			</Modal>
-			{countDown !== -1 && <div style={styles.countDownModal}>{countDown === 0 ? 'Start !' : `${countDown}`}</div>}
+			{currentRoom && countDown !== -1 && <div style={styles.countDownModal}>{countDown === 0 ? 'Start !' : `${countDown}`}</div>}
 			{currentRoom && drawGameArea()}
 		</div>
 	)
