@@ -1,5 +1,5 @@
 import * as server from '../src/index.js';
-import params from '../../client/src/params.js';
+import params from '../src/params.js';
 
 import Client from 'socket.io-client';
 

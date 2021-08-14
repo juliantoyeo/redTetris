@@ -4,23 +4,6 @@ import { SOCKET_RES, SOCKET_EVENTS } from '../constants/socketConstants';
 import { PIECE_STACK_LENGTH, STACK_LIMIT, BOARD_SIZE } from '../constants/gameConstant';
 
 export const roomsSocket = (clients, rooms, io, socket) => {
-
-	// io.of("/").adapter.on("create-room", (room) => {
-	// 	console.log(`adapter: room ${room} was created`);
-	// });
-
-	// io.of("/").adapter.on("join-room", (room, id) => {
-	// 	console.log(`adapter: socket ${id} has joined room ${room}`);
-	// });
-
-	// io.of("/").adapter.on("leave-room", (room, id) => {
-	// 	console.log(`adapter: socket ${id} has leaved room ${room}`);
-	// });
-
-	// io.of("/").adapter.on("delete-room", (room, id) => {
-	// 	console.log(`adapter: socket ${id} has deleted room ${room}`);
-	// });
-
 	socket.on(SOCKET_EVENTS.CREATE_ROOM, (data, callback) => {
 		const { name, owner, maxPlayer, gameMode } = data.newRoom;
 		if (rooms.findIndex((room) => room.name == name) == -1) {
@@ -41,7 +24,7 @@ export const roomsSocket = (clients, rooms, io, socket) => {
 				});
 				clients[playerIndex].update({ connected: true });
 				socket.join(newRoom.name);
-				io.sockets.emit(SOCKET_EVENTS.CREATE_ROOM, newRoom); // emits to every client
+				io.sockets.emit(SOCKET_EVENTS.CREATE_ROOM, newRoom);
 			}
 		}
 		else {
@@ -198,11 +181,7 @@ export const roomsSocket = (clients, rooms, io, socket) => {
 		else {
 			const currentRoom = rooms[index];
 			
-			// console.log(currPlayer.name, "with stackIndex : ", currPlayer.stackIndex, " requested for new stack" );
-			// console.log("current stack version", currentRoom.pieces.version);
 			if (currentRoom.pieces.stack.length === currPlayer.stackIndex + 1 && stackVersion === currentRoom.pieces.version) {
-				// if (currentRoom.pieces.stack.length === currPlayer.stackIndex + 1) {
-				// console.log(currPlayer.name, "successfully get new stack and checking the lowestIndex" );
 				currentRoom.pieces.generatePieces(PIECE_STACK_LENGTH);
 
 				let lowestIndex = currentRoom.players[0].stackIndex;
@@ -212,16 +191,13 @@ export const roomsSocket = (clients, rooms, io, socket) => {
 						lowestIndex = player.stackIndex
 					}
 				})
-				// console.log("lowestIndex", lowestIndex);
 				if (lowestIndex > STACK_LIMIT) {
 					currentRoom.pieces.stack.splice(0, STACK_LIMIT);
 					currentRoom.players.map((player) => { player.stackIndex -= STACK_LIMIT })
-					// console.log("lowestIndex > STACK_LIMIT, the stack will be deleted")
 				}
 
 				io.to(roomName).emit(SOCKET_EVENTS.UPDATE_ROOM, currentRoom);
 			}
-			// console.log("currentRoom.pieces.stack.length", currPlayer.name, currentRoom.pieces.stack.length, "\n");
 			callback({
 				status: 200,
 				msg: 'SUCCESS'

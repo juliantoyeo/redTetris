@@ -1,4 +1,4 @@
-import Piece from '../class/Piece';
+import Piece from './Piece';
 
 class Game {
 	constructor(props) {
