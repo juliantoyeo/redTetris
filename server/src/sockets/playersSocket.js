@@ -44,10 +44,8 @@ export const playersSocket = (clients, rooms, io, socket) => {
 			const playersLeft = selectedRoom.players.filter(player => player.gameOver === false);
 			
 			io.to(roomName).emit(SOCKET_EVENTS.UPDATE_ROOM, selectedRoom);
-      // console.log('playersLeft', playersLeft);
 
 			if (playersLeft.length ===  1 || (selectedRoom.players.length === 1)) {
-				// console.log('the game is Over!!', playersLeft[0]);
 				io.to(roomName).emit(SOCKET_EVENTS.GAME_IS_OVER, playersLeft[0]);
 			}
 

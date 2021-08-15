@@ -3,9 +3,8 @@ import { SOCKET_EVENTS } from '../constants/socketConstants'
 export const helpersSocket = (clients, rooms, io, socket) => {
 
 	socket.on('emit_room', ({ roomName, emitEvent, dataToSent = {}}) => {
-		console.log('emit_room called', emitEvent);
 		io.to(roomName).emit(emitEvent, dataToSent);
-	}); // not safe need verification ?
+	});
 
 	socket.on("disconnect", () => {
 		const index = clients.findIndex((client) => client.id === socket.id);

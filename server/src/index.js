@@ -15,7 +15,7 @@ export const rooms = new Array();
 const initApp = (app, params, cb) => {
 	const { host, port } = params;
 	const handler = (req, res) => {
-		let file = '../client/build';
+		let file = `${__dirname}/../../client/build`;
 		if (req.url === '/')
 			file = `${file}/index.html`;
 		else
@@ -42,7 +42,6 @@ const initApp = (app, params, cb) => {
 
 const initEngine = (io) => {
 	io.on('connection', (socket) => {
-		console.log('connected', socket.id);
 		helpersSocket(clients, rooms, io, socket);
 		playersSocket(clients, rooms, io, socket);
 		roomsSocket(clients, rooms, io, socket);

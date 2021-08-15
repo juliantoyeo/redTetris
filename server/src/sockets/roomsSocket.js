@@ -186,7 +186,6 @@ export const roomsSocket = (clients, rooms, io, socket) => {
 
 				let lowestIndex = currentRoom.players[0].stackIndex;
 				currentRoom.players.map((player) => {
-					console.log(player.name, player.stackIndex);
 					if (lowestIndex > player.stackIndex) {
 						lowestIndex = player.stackIndex
 					}
