@@ -14,6 +14,7 @@ import { usePiece } from '../hooks/usePiece';
 import { useBoard } from '../hooks/useBoard';
 import { KEY_CODE, PIECES } from '../constants/gameConstant';
 import { SOCKET_EVENTS } from '../constants/socketConstants';
+import { errorAlert } from '../utils/errorUtils';
 
 const styles = {
 	mainContainerStyle: {
@@ -79,7 +80,7 @@ const Tetris = (props) => {
 	const defaulDropTime = 1000;
 	const [currPlayer, setCurrPlayer] = React.useState(null);
 	const [currentRoom, setCurrentRoom] = React.useState(null);
-	const [countDown, setCountDown] = React.useState(0);
+	const [countDown, setCountDown] = React.useState(3);
 	const [dropTime, setDropTime] = React.useState(null);
 	const [currentDropTime, setCurrentDropTime] = React.useState(defaulDropTime);
 	const [gameOver, setGameOver] = React.useState(true);
@@ -99,7 +100,19 @@ const Tetris = (props) => {
 			});
 		setDropTime(null);
 		setCurrentDropTime(defaulDropTime);
-	}
+	};
+
+	React.useEffect(() => {
+		if (socket) {
+			socket.off(SOCKET_EVENTS.START_GAME);
+			socket.on(SOCKET_EVENTS.START_GAME, () => {
+				setWinner({ name: '' })
+				setOpenModal(false);
+				setCountDown(3);
+			});
+		}
+	}, [socket]);
+
 	React.useEffect(() => {
 		if (mainContainerRef.current) {
 			mainContainerRef.current.focus();
@@ -215,7 +228,14 @@ const Tetris = (props) => {
 		}
 	}
 
-
+	const restartGame = () => {
+		if (socket)
+			socket.emit(SOCKET_EVENTS.START_GAME, roomName, (res) => {
+				if (res.status !== 200) {
+					errorAlert(res.msg);
+				}
+			});
+	}
 
 	const movePiece = (x) => {
 		if (!checkCollision(piece, boardWithLandedPiece, { x: x, y: 0 }))
@@ -301,6 +321,7 @@ const Tetris = (props) => {
 					</Grid>
 					<Grid item xs={12} style={styles.gridItem}>
 						<Button onClick={onReturnToLobby} type={'button'} style={styles.button} text={'Back to Lobby'} />
+						<Button onClick={restartGame} type={'button'} style={styles.button} text={'Restart'} />
 					</Grid>
 				</Grid>
 			</Modal>
