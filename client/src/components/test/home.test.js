@@ -6,19 +6,11 @@ import _ from 'lodash';
 import Home from '../Home';
 import * as AppContext from '../../contexts/combinedContext';
 
-// import Client from 'socket.io-client';
-// import params from '../../params';
-// let socket = new Client(params.server.url);
-
 import MockedSocket from 'socket.io-mock';
 let socket = new MockedSocket();
 socket.emit = jest.fn();
 
 enableHooks(jest);
-// import RoomDisplay from '../RoomDisplay'
-// jest.mock('../RoomDisplay')
-// eslint-disable-next-line react/display-name
-// RoomDisplay.mockImplementation = () => <div />
 
 let state = {
 	currentPlayer: {

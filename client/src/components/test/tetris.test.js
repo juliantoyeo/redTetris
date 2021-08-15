@@ -110,10 +110,6 @@ describe('Test Tetris component', () => {
 
 	const setState = jest.fn();
 
-	// beforeAll(() => {
-	// 	jest.useFakeTimers();
-	// });
-
 	beforeEach(() => {
 		const contextValues = [state, jest.fn()];
 

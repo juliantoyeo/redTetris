@@ -1,20 +1,17 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { Modal, Typography, Grid } from '@material-ui/core';
-// import { useParams } from 'react-router-dom';
 
 import GameArea from './GameArea';
 import { doRoomSocketEvent } from '../utils/socketUtils';
 import Button from './subComponents/Button';
-// import combinedContext from '../contexts/combinedContext';
 import { useAppContext } from '../contexts/combinedContext';
 import { checkCollision } from '../utils/boardUtils';
 import { useInterval } from '../hooks/useInterval';
 import { usePiece } from '../hooks/usePiece';
 import { useBoard } from '../hooks/useBoard';
-// import { useGameStatus } from '../hooks/useGameStatus';
 import { KEY_CODE, PIECES } from '../constants/gameConstant';
 import { SOCKET_EVENTS } from '../constants/socketConstants';
 
@@ -77,6 +74,7 @@ const Tetris = (props) => {
 	const { socket } = props;
 	const { roomName } = useParams();
 	const history = useHistory();
+	const mainContainerRef = React.useRef();
 	const [state] = useAppContext();
 	const defaulDropTime = 1000;
 	const [currPlayer, setCurrPlayer] = React.useState(null);
@@ -102,6 +100,11 @@ const Tetris = (props) => {
 		setDropTime(null);
 		setCurrentDropTime(defaulDropTime);
 	}
+	React.useEffect(() => {
+		if (mainContainerRef.current) {
+			mainContainerRef.current.focus();
+		}
+	}, [mainContainerRef]);
 
 	React.useEffect(() => {
 		if (socket) {
@@ -114,7 +117,7 @@ const Tetris = (props) => {
 	}, []);
 
 	React.useEffect(() => {
-		return history.listen(location => {
+		return history.listen(() => {
 			if (history.action === 'POP') {
 				onReturnToLobby();
 			}
@@ -126,7 +129,6 @@ const Tetris = (props) => {
 			socket.off(SOCKET_EVENTS.ADD_BLOCKING_ROW);
 			socket.on(SOCKET_EVENTS.ADD_BLOCKING_ROW, (dataReceived) => {
 				if (dataReceived.id !== socket.id) {
-					console.log(SOCKET_EVENTS.ADD_BLOCKING_ROW, dataReceived);
 					const newBoardWithLandedPiece = putBlockingRow(dataReceived.clearedRow);
 					if (!checkCollision(piece, newBoardWithLandedPiece, { x: 0, y: 0 })) {
 						updatePiece(newBoardWithLandedPiece, { x: 0, y: 0 }, false);
@@ -255,7 +257,6 @@ const Tetris = (props) => {
 			else if (keyCode === KEY_CODE.DOWN || keyCode === KEY_CODE.S)
 				dropPiece();
 			else if (keyCode === KEY_CODE.UP || keyCode === KEY_CODE.W)
-				// moveUp();
 				pieceRotate(boardWithLandedPiece, 1);
 			else if (keyCode === KEY_CODE.Z)
 				pieceRotate(boardWithLandedPiece, -1);
@@ -286,6 +287,7 @@ const Tetris = (props) => {
 			tabIndex={'0'}
 			onKeyDown={(e) => move(e)}
 			onKeyUp={keyUp}
+			ref={mainContainerRef}
 		>
 			<Modal
 				open={openModal}

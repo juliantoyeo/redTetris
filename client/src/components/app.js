@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { createMemoryHistory } from 'history'
-// import '@babel/polyfill/noConflict' // for aysnc function
 import {
 	HashRouter as Router,
 	Switch,

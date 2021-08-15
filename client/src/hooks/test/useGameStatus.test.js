@@ -5,10 +5,6 @@ import { useGameStatus } from '../useGameStatus';
 
 enableHooks(jest);
 
-const callback = jest.fn();
-
-const delay = 1000;
-
 describe('test useGameStatus', () => {
 	const setState = jest.fn();
 

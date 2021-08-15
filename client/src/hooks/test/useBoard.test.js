@@ -49,8 +49,6 @@ const fakeGhostPiece = {
 
 const fakeBoard = TEST_BOARD.NEW_BOARD;
 
-const setCurrentPlayer = jest.fn();
-
 const getPiece = jest.fn();
 
 const gameOver = false;

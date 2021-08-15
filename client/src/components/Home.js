@@ -62,7 +62,6 @@ const Home = (props) => {
 		if (socket) {
 			socket.off(SOCKET_EVENTS.START_GAME);
 			socket.on(SOCKET_EVENTS.START_GAME, (updatedRoom) => {
-				// console.log('WebSocket start game event received :', updatedRoom);
 				history.push(`/${updatedRoom.name}[${currentPlayer.name}]`);
 			});
 		}

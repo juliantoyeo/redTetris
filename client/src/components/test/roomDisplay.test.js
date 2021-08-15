@@ -2,8 +2,6 @@ import React from 'react';
 import { shallow } from 'enzyme';
 
 import RoomDisplay from '../RoomDisplay';
-import { createBoard } from '../../utils/boardUtils';
-import { CELL_SIZE, PIECES } from '../../constants/gameConstant';
 
 const fakeClick = jest.fn();
 

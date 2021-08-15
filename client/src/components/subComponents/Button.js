@@ -7,7 +7,6 @@ const styles = {
 		boxSizing: 'border-box',
 		width: '100%',
 		height: '3vw',
-		// borderRadius: '4vw',
 		color: 'white',
 		cursor: 'pointer',
 		backgroundColor: `rgba(${COLORS.DARK_RED}, 1)`,

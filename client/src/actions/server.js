@@ -8,7 +8,6 @@ export const initiateSocket = (dispatch) => {
 	const newSocket = socketIOClient(params.server.url);
 
 	newSocket.emit(SOCKET_EVENTS.FECTH_ALL_ROOM, (res) => {
-		// console.log('WebSocket fecth all room event received :', res);
 		if (res.status === 200) {
 			_.map(res.rooms, (room) => {
 				dispatch(addRoom(room));
@@ -17,23 +16,18 @@ export const initiateSocket = (dispatch) => {
 	});
 
 	newSocket.on(SOCKET_EVENTS.CREATE_ROOM, (newRoom) => {
-		// console.log('WebSocket createRoom event received :', newRoom);
 		dispatch(addRoom(newRoom));
 	});
 
 	newSocket.on(SOCKET_EVENTS.UPDATE_ROOM, (updatedRoom) => {
-		// console.log('WebSocket updateRoom event received :', updatedRoom);
 		dispatch(updateRoom(updatedRoom));
 	});
 
 	newSocket.on(SOCKET_EVENTS.DELETE_ROOM, (roomName) => {
-		// console.log('WebSocket deleteRoom event received :', roomName);
 		dispatch(deleteRoom(roomName));
 	});
 
 	newSocket.on('disconnect', () => {
-		// console.log('server disconected')
-		// alert('Server disconnected press OK to refresh')
 		window.location.reload();
 	});
 
@@ -41,6 +35,5 @@ export const initiateSocket = (dispatch) => {
 };
 
 export const disconnectSocket = (socket) => {
-	// console.log('disconnecting socket');
 	if (socket) socket.disconnect();
 };

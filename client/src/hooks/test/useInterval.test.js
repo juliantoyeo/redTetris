@@ -10,7 +10,6 @@ const callback = jest.fn();
 const delay = 1000;
 
 describe('test useInterval', () => {
-	const setState = jest.fn();
 
 	beforeEach(() => {
 		jest.spyOn(React, 'useEffect').mockImplementation(f => f());

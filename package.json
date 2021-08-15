@@ -4,10 +4,11 @@
   "description": "redTetris",
   "main": "",
   "scripts": {
-    "start-server": "nodemon --experimental-modules -r esm server/build/main.js",
-    "build-server": "babel -d ./server/build ./server/src",
+    "start": "nodemon --experimental-modules -r esm server/build/main.js",
+    "build-all": "babel -d ./server/build ./server/src && cd client && yarn build",
     "install-all": "cd server && yarn install && cd ../client && yarn install && cd .. && yarn install",
-    "test": "cd client && npm run test && cd ../server && npm run test"
+    "test-all": "cd client && npm run test && cd ../server && npm run test",
+    "clear-all": "cd server && rm -rf node_modules && rm -rf build && rm yarn.lock && cd ../client && rm -rf node_modules && rm -rf build && rm yarn.lock && cd .. && rm -rf node_modules && rm -rf build && rm yarn.lock"
   },
   "repository": {
     "type": "git",
@@ -22,7 +23,8 @@
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.41",
     "@babel/core": "^7.0.0-beta.41",
-    "babel-node": "^0.0.1-security"
+    "babel-node": "^0.0.1-security",
+    "nodemon": "^2.0.7"
   },
   "dependencies": {
     "esm": "^3.2.25"
