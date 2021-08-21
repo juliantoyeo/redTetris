@@ -88,7 +88,7 @@ const Tetris = (props) => {
 	const [openModal, setOpenModal] = React.useState(false);
 	const [winner, setWinner] = React.useState({ name: '' });
 	const [piece, ghostPiece, updatePiece, getPiece, pieceRotate] = usePiece(socket, currentRoom, currPlayer, setCurrPlayer);
-	const [, setBoard, boardWithLandedPiece, setBoardWithLandedPiece, putBlockingRow] = useBoard(socket, roomName, piece, ghostPiece, getPiece, gameOver);
+	const [, setBoard, boardWithLandedPiece, setBoardWithLandedPiece, putBlockingRow, resetBoard] = useBoard(socket, roomName, piece, ghostPiece, getPiece, gameOver);
 
 	const stopGame = () => {
 		setGameOver(true);
@@ -104,10 +104,13 @@ const Tetris = (props) => {
 
 	React.useEffect(() => {
 		if (socket) {
-			socket.off(SOCKET_EVENTS.START_GAME);
-			socket.on(SOCKET_EVENTS.START_GAME, () => {
-				setWinner({ name: '' })
+			socket.off(SOCKET_EVENTS.RESTART_GAME);
+			socket.on(SOCKET_EVENTS.RESTART_GAME, () => {
+				resetBoard();
+				setWinner({ name: '' });
 				setOpenModal(false);
+				setGameOver(true);
+				setCurrentDropTime(defaulDropTime);
 				setCountDown(3);
 			});
 		}
@@ -229,12 +232,13 @@ const Tetris = (props) => {
 	}
 
 	const restartGame = () => {
-		if (socket)
-			socket.emit(SOCKET_EVENTS.START_GAME, roomName, (res) => {
+		if (socket) {
+			socket.emit(SOCKET_EVENTS.RESTART_GAME, roomName, (res) => {
 				if (res.status !== 200) {
 					errorAlert(res.msg);
 				}
 			});
+		}
 	}
 
 	const movePiece = (x) => {
@@ -321,7 +325,9 @@ const Tetris = (props) => {
 					</Grid>
 					<Grid item xs={12} style={styles.gridItem}>
 						<Button onClick={onReturnToLobby} type={'button'} style={styles.button} text={'Back to Lobby'} />
-						<Button onClick={restartGame} type={'button'} style={styles.button} text={'Restart'} />
+						{currentRoom && currPlayer && currentRoom.owner === currPlayer.name &&
+							<Button onClick={restartGame} type={'button'} style={styles.button} text={'Restart'} />
+						}
 					</Grid>
 				</Grid>
 			</Modal>

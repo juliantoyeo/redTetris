@@ -17,10 +17,21 @@ class Player {
 
 	createBoard = () => {
 		this.board = (
-			Array.from(new Array(BOARD_SIZE.HEIGHT), () => 
+			Array.from(new Array(BOARD_SIZE.HEIGHT), () =>
 				new Array(BOARD_SIZE.WIDTH).fill('0')
 			)
 		);
+	}
+
+	resetPlayer = () => {
+    this.createBoard();
+		this.gameOver = false;
+		this.gameStatus = {
+			score: 0,
+			rows: 0,
+			level: 0
+		};
+		this.stackIndex = 0;
 	}
 
 	update = (data) => {

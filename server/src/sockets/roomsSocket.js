@@ -118,6 +118,29 @@ export const roomsSocket = (clients, rooms, io, socket) => {
 		}
 	});
 
+  socket.on(SOCKET_EVENTS.RESTART_GAME, (roomName, callback) => {
+		const index = rooms.findIndex((room) => room.name == roomName);
+		if (index == -1) {
+			callback({
+				status: 404,
+				msg: SOCKET_RES.ROOM_DOESNT_EXIST
+			});
+		}
+		else {
+			const currentRoom = rooms[index];
+
+      currentRoom.resetPieces();
+			currentRoom.pieces.generatePieces(PIECE_STACK_LENGTH);
+			currentRoom.players.forEach((player) => player.resetPlayer());
+			io.to(roomName).emit(SOCKET_EVENTS.RESTART_GAME, currentRoom);
+			io.sockets.emit(SOCKET_EVENTS.UPDATE_ROOM, currentRoom);
+			callback({
+				status: 200,
+				msg: 'SUCCESS'
+			});
+		}
+	});
+
 	socket.on(SOCKET_EVENTS.UPDATE_BOARD, ( { newBoard, roomName, gameStatus }, callback) => {
 		const index = rooms.findIndex((room) => room.name == roomName);
 		if (index == -1) {

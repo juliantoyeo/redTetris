@@ -21,6 +21,10 @@ class Game {
 		if (this.owner === playerName) this.owner = this.players[0].name;
 	}
 
+  resetPieces = () => {
+    this.pieces = new Piece();
+  }
+
 	update = (data) => {
 		if (!data) return;
 		this.name = data.name || this.name;

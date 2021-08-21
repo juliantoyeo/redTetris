@@ -10,7 +10,7 @@ export const useBoard = (socket, roomName, currentPiece, ghostPiece, getPiece, g
 	const [board, setBoard] = React.useState(null);
 	const [boardWithLandedPiece, setBoardWithLandedPiece] = React.useState(createBoard());
 	const [rowsCleared, setRowsCleared] = React.useState(0);
-	const [gameStatus] = useGameStatus(rowsCleared);
+	const [gameStatus, setGameStatus] = useGameStatus(rowsCleared);
 
 	const findEmptyCell = (row) => {
 		let i = 0;
@@ -96,10 +96,19 @@ export const useBoard = (socket, roomName, currentPiece, ghostPiece, getPiece, g
 		return newBoard;
 	}
 
+	const resetBoard = () => {
+		setRowsCleared(0);
+		setGameStatus({
+			score: 0,
+			rows: 0,
+			level: 0
+		})
+	}
+
 	React.useEffect(() => {
 		setRowsCleared(0);
 		setBoard(updateBoard());
 	}, [currentPiece]);
 
-	return [board, setBoard, boardWithLandedPiece, setBoardWithLandedPiece, putBlockingRow];
+	return [board, setBoard, boardWithLandedPiece, setBoardWithLandedPiece, putBlockingRow, resetBoard];
 }
